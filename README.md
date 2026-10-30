@@ -44,9 +44,9 @@ Olin approaches the inverse problem:
 
 > **Given an observed lensed image, can a machine-learning model infer the physical parameters that generated it?**
 
-The initial experiment focuses on estimating the **Einstein radius** \( \theta_E \) as a continuous regression target.
+The initial experiment focuses on estimating the **Einstein radius** $\theta_E$ as a continuous regression target.
 
-The first controlled dataset varies only \( \theta_E \), while lens, source, and observation parameters remain fixed. This isolates the relationship between the Einstein radius and the resulting image before introducing additional sources of ambiguity.
+The first controlled dataset varies only $\theta_E$, while lens, source, and observation parameters remain fixed. This isolates the relationship between the Einstein radius and the resulting image before introducing additional sources of ambiguity.
 
 ## Forward Model
 
@@ -105,13 +105,13 @@ Physics-based reconstruction
 Comparison with observation
 ```
 
-The first ML experiment will treat \( \theta_E \) as a continuous regression variable.
+The first ML experiment will treat $\theta_E$ as a continuous regression variable.
 
 ### Initial V0 configuration
 
 | Parameter | V0 |
 |---|---|
-| Target | Einstein radius \( \theta_E \) |
+| Target | Einstein radius $\theta_E$ |
 | Training range | 1.6″ – 2.8″ |
 | Image size | 160 × 160 |
 | Pixel scale | 0.05″ / pixel |
