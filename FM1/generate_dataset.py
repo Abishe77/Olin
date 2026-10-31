@@ -11,7 +11,7 @@ from dataset_generation_forward_model import simulate
 theta_E_min = 1.6
 theta_E_max = 2.8
 
-num_samples = 100
+num_samples = 10000
 
 rng = np.random.default_rng(42)
 
