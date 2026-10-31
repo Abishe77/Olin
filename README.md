@@ -10,7 +10,7 @@ Olin is designed as a first-principles scientific software project rather than a
 
 ## Project Status
 
-🚧 **Early development — forward-model and synthetic-data pipeline**
+**Early development — forward-model and synthetic-data pipeline**
 
 Current progress:
 
