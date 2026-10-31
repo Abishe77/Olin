@@ -112,7 +112,7 @@ The first ML experiment will treat $\theta_E$ as a continuous regression variabl
 | Parameter | V0 |
 |---|---|
 | Target | Einstein radius $\theta_E$ |
-| Training range | 1.6″ – 2.8″ |
+| Training range | 1.6″ – 2.8″arcseconds|
 | Image size | 160 × 160 |
 | Pixel scale | 0.05″ / pixel |
 | Field of view | 8″ × 8″ |
