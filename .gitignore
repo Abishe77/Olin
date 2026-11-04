@@ -2,3 +2,5 @@ datasets/
 __pycache__/
 *.pyc
 training/models/
+FM2/cnn1_prediction.npz
+FM2/results/
