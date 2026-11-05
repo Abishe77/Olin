@@ -4,9 +4,9 @@
 
 Olin is a scientific machine-learning project exploring how deep learning can estimate physical parameters of gravitational lenses from astronomical observations.
 
-The central idea is straightforward:
+The central question is:
 
-**If gravity bends light in a predictable way, can a neural network learn to work backwards from the observed image and estimate the physical parameters responsible for that distortion?**
+**If gravity bends light in a predictable way, can a neural network work backwards from an observed image and estimate the physical parameters responsible for that distortion?**
 
 Olin investigates this question using established gravitational-lensing physics, controlled synthetic observations, convolutional neural networks, and physics-based image reconstruction.
 
@@ -36,17 +36,17 @@ Rather than treating an astronomical image as an ordinary classification input, 
        Scientific Evaluation
 ```
 
-The project combines three distinct components:
+The project combines three components:
 
 - **Physics:** Generate observations using established gravitational-lensing models.
-- **Deep Learning:** Infer physical parameters from the generated images.
-- **Reconstruction:** Use the inferred parameters to reproduce the observation through the physical model.
+- **Deep Learning:** Infer physical parameters from generated images.
+- **Reconstruction:** Use inferred parameters to reproduce observations through the physical model.
 
 ---
 
 ## Project Status
 
-<kbd>Active Development</kbd> <kbd>Synthetic Inference Pipeline</kbd>
+**Active Development — Synthetic Inference and Reconstruction Pipeline**
 
 Olin currently has a working synthetic observation generation, parameter inference, and reconstruction pipeline.
 
@@ -99,7 +99,7 @@ Imagine observing a distant galaxy.
 
 Between that galaxy and the observer, there may be another massive object, such as a foreground galaxy or galaxy cluster.
 
-The gravitational field of this foreground object bends the path of light travelling from the distant source towards the observer.
+The gravitational field of this foreground object bends the path of light travelling from the distant source towards us.
 
 This phenomenon is called **gravitational lensing**.
 
@@ -128,28 +128,28 @@ This makes gravitational lensing an important tool in astrophysics and cosmology
 
 The relationship between the source position, observed image position, and gravitational deflection is described by the gravitational-lensing equation:
 
-|$$
+$$
 \boldsymbol{\beta}
 =
 \boldsymbol{\theta}
 -
 \boldsymbol{\alpha}(\boldsymbol{\theta})
-$$|
+$$
 
 Where:
 
 | Symbol | Meaning |
 |---|---|
-| $\boldsymbol{\beta}$ | Position of the source in the source plane |
-| $\boldsymbol{\theta}$ | Position of the image in the image plane |
-| $\boldsymbol{\alpha}$ | Gravitational deflection angle |
+| β | Position of the source in the source plane |
+| θ | Position of the image in the image plane |
+| α | Gravitational deflection angle |
 
 In simpler terms:
 
 - Light originates from a background source.
 - The foreground gravitational field changes its propagation direction.
 - The observer receives light at an apparent image position.
-- The difference between the source and image positions is related to the gravitational deflection.
+- The difference between the source and image positions is related to gravitational deflection.
 
 The lens equation provides the mathematical foundation for the physical forward model used in Olin.
 
@@ -181,8 +181,6 @@ Known Source Parameters
       Predicted Image
 ```
 
-The forward problem is relatively direct because the physical parameters are supplied.
-
 ### Inverse problem
 
 Now consider the opposite situation.
@@ -211,11 +209,11 @@ Olin investigates this inverse problem using deep learning.
 
 ## 1.4 Initial inference target: Einstein radius
 
-The first version of Olin focuses on estimating the Einstein radius, represented by $\theta_E$.
+The first version of Olin focuses on estimating the Einstein radius, represented by θ_E.
 
 The Einstein radius characterizes the angular scale of a gravitational lens. It depends on the lens mass and the geometry between the observer, lens, and source.
 
-For a simple point-mass lens, the Einstein radius is related to the lens mass and angular-diameter distances:
+For a simple point-mass lens, the Einstein radius is:
 
 $$
 \theta_E
@@ -228,16 +226,16 @@ $$
 
 Where:
 
-- $G$ is the gravitational constant.
-- $M$ is the lens mass.
-- $c$ is the speed of light.
-- $D_L$ is the angular-diameter distance to the lens.
-- $D_S$ is the angular-diameter distance to the source.
-- $D_{LS}$ is the angular-diameter distance between the lens and source.
+- G is the gravitational constant.
+- M is the lens mass.
+- c is the speed of light.
+- D_L is the angular-diameter distance to the lens.
+- D_S is the angular-diameter distance to the source.
+- D_LS is the angular-diameter distance between the lens and source.
 
 This expression illustrates why the Einstein radius is physically meaningful: it is connected to both the lens mass and the geometry of the system.
 
-For the initial machine-learning experiment, Olin treats $\theta_E$ as a continuous regression target.
+For the initial machine-learning experiment, Olin treats θ_E as a continuous regression target.
 
 ```text
 Input:
@@ -353,11 +351,11 @@ The Sérsic profile provides a parameterized way to describe the brightness dist
 | Photon scale | 1000 |
 | Read noise | 1.0 |
 
-### Why these observational effects matter
+### Understanding the observational effects
 
-| Component | Physical interpretation |
+| Component | Purpose |
 |---|---|
-| PSF | Models the blurring of incoming light by the instrument |
+| PSF | Models how the instrument blurs incoming light |
 | Photon-counting noise | Represents statistical fluctuations in detected photons |
 | Read noise | Represents additional noise introduced by detector electronics |
 
@@ -365,9 +363,7 @@ The observation model is intentionally controlled. It is not a complete telescop
 
 The objective is to introduce relevant observational effects while keeping the initial inverse problem manageable.
 
-### FM1 implementation
-
-`FM1/dataset_generation_forward_model.py`
+**FM1 implementation:** `FM1/dataset_generation_forward_model.py`
 
 ---
 
@@ -385,7 +381,7 @@ Dataset V0 contains **10,000 synthetic gravitational-lensing observations**.
 
 | Parameter | Configuration |
 |---|---|
-| Target | Einstein radius ($\theta_E$) |
+| Target | Einstein radius (θ_E) |
 | Target range | 1.6″ – 2.8″ |
 | Image dimensions | 160 × 160 |
 | Pixel scale | 0.05″ / pixel |
@@ -401,8 +397,6 @@ Dataset V0 contains **10,000 synthetic gravitational-lensing observations**.
 The initial Einstein-radius range was selected after examining the generated observations and ensuring that the lensing structures remained sufficiently distinguishable for the controlled V0 experiment.
 
 ## 3.2 Dataset structure
-
-The generated dataset contains:
 
 ```text
 datasets/
@@ -450,9 +444,7 @@ Normalization statistics are calculated from the training set to avoid using inf
 
 Generated images and prepared arrays are excluded from Git because they are derived experimental data.
 
-### Dataset preparation implementation
-
-`training/prepare_dataset.py`
+**Dataset preparation:** `training/prepare_dataset.py`
 
 ---
 
@@ -546,19 +538,17 @@ The training pipeline incorporates:
 
 CNN₁ achieved substantially better performance on the held-out test set.
 
-The next section compares both models quantitatively.
-
 ---
 
 # 5. Experimental Evaluation — CNN₀ vs CNN₁
 
 Both models were evaluated on the same held-out test set.
 
-Two metrics are used:
+Two metrics are used.
 
 ### Mean Absolute Error (MAE)
 
-MAE measures the average absolute difference between the predicted and true Einstein-radius values.
+MAE measures the average absolute difference between predicted and true Einstein-radius values.
 
 $$
 MAE =
@@ -569,9 +559,9 @@ $$
 
 Here:
 
-- $y_i$ is the ground-truth value.
-- $\hat{y}_i$ is the model prediction.
-- $N$ is the number of test samples.
+- yᵢ is the ground-truth value.
+- ŷᵢ is the model prediction.
+- N is the number of test samples.
 
 A lower MAE indicates that predictions are closer to their corresponding ground-truth values on average.
 
@@ -704,7 +694,7 @@ An important implementation detail is that FM2 calls:
 image_model.image(...)
 ```
 
-rather than using the full stochastic observation simulation again.
+rather than using the full stochastic observation simulation.
 
 This produces a deterministic model image without introducing a fresh realization of detector noise.
 
@@ -712,7 +702,7 @@ The result can therefore be compared more directly with the original noisy obser
 
 ### Two reconstruction paths
 
-FM2 generates two reconstructions:
+FM2 generates two reconstructions.
 
 **1. Ground-truth reconstruction**
 
@@ -731,14 +721,17 @@ It helps separate errors caused by the CNN's parameter prediction from differenc
 The difference between an observed image and a reconstructed image is called the residual.
 
 $$
-R = I_{\mathrm{observed}} - I_{\mathrm{reconstructed}}
+R =
+I_{\mathrm{observed}}
+-
+I_{\mathrm{reconstructed}}
 $$
 
 Where:
 
-- $I_{\mathrm{observed}}$ is the original synthetic observation.
-- $I_{\mathrm{reconstructed}}$ is the image generated by FM2.
-- $R$ is the residual image.
+- I_observed is the original synthetic observation.
+- I_reconstructed is the image generated by FM2.
+- R is the residual image.
 
 A residual image shows which structures in the original observation are not reproduced by the reconstruction.
 
@@ -815,13 +808,9 @@ The figure demonstrates the current reconstruction workflow qualitatively.
 
 Systematic residual statistics, broader test-set reconstruction evaluation, and investigation of parameter degeneracies remain ongoing.
 
-### FM2 implementation
+**FM2 implementation:** `FM2/reverse_reconstruction_model.py`
 
-`FM2/reverse_reconstruction_model.py`
-
-### Integration test
-
-`FM2/test_cnn1_fm2.py`
+**Integration test:** `FM2/test_cnn1_fm2.py`
 
 ---
 
@@ -873,8 +862,6 @@ The current pipeline connects physical simulation, machine learning, and reverse
 ```
 
 CNN₀ provides the baseline comparison, while CNN₁ supplies the current parameter predictions used by FM2.
-
-This separation keeps the responsibilities of each component clear:
 
 | Component | Responsibility |
 |---|---|
@@ -950,7 +937,7 @@ Olin follows several principles to keep the scientific and software components m
 
 ### 1. Physics before machine learning
 
-The synthetic observations are generated using established gravitational-lensing models.
+Synthetic observations are generated using established gravitational-lensing models.
 
 The neural network learns from a controlled physical system rather than arbitrary image labels.
 
@@ -1034,7 +1021,7 @@ The priority is to develop a scientifically meaningful inverse-inference system 
 | Numerical computation | NumPy |
 | Data handling | Pandas |
 | Scientific visualization | Matplotlib |
-| Gravitational lens modelling | lenstronomy |
+| Gravitational-lens modelling | lenstronomy |
 | Deep learning | TensorFlow / Keras |
 | Data storage | NumPy arrays, CSV, JSON |
 | Version control | Git and GitHub |
