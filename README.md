@@ -128,13 +128,13 @@ This makes gravitational lensing an important tool in astrophysics and cosmology
 
 The relationship between the source position, observed image position, and gravitational deflection is described by the gravitational-lensing equation:
 
-$$
+|$$
 \boldsymbol{\beta}
 =
 \boldsymbol{\theta}
 -
 \boldsymbol{\alpha}(\boldsymbol{\theta})
-$$
+$$|
 
 Where:
 
