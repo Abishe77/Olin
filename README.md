@@ -38,15 +38,14 @@ The current implementation establishes a working synthetic-data-to-inference-to-
 - Parameter-wise error analysis
 - FM2 physics-based reconstruction engine
 - CNN₁ → FM2 inference and reconstruction integration
-- 30-sample stratified reconstruction validation
-- Quantitative reconstruction residual analysis
-- Visual comparison of predicted and ground-truth reconstructions
 
 ### Current Development
 
-- Scientific design of Dataset V1
+- Quantitative reconstruction residual analysis
+- Scientific validation of inferred parameters
 - Investigation of parameter degeneracies
 - Generalization testing under increased physical variation
+- Scientific design of Dataset V1
 
 ### Planned
 
@@ -406,68 +405,20 @@ A small residual alone does not establish that the inferred physical parameters 
 
 For this reason, reconstruction analysis must be considered alongside direct parameter-estimation error.
 
-### Dataset V0 Reconstruction Validation
+### Current milestone
 
-A stratified validation experiment was conducted using **30 held-out test observations**, with six samples selected from each of five equal-width Einstein-radius bins.
+The CNN₁ → FM2 integration has been successfully executed on a held-out synthetic test observation.
 
-For each observation, FM2 generated:
+The implementation has:
 
-- A ground-truth reconstruction using the original Einstein radius.
-- A predicted reconstruction using the Einstein radius inferred by CNN₁.
+- Loaded a test observation.
+- Generated a CNN₁ Einstein-radius prediction.
+- Transferred the prediction to the FM2 environment.
+- Generated a predicted-parameter reconstruction.
+- Generated a ground-truth reconstruction.
+- Verified the reconstructed image dimensions and numerical validity.
 
-The experiment evaluated both direct parameter-estimation error and image residuals against the original noisy observation.
-
-#### Quantitative Results
-
-| Metric | Result |
-|---|---:|
-| Mean absolute Einstein-radius error | 0.017951″ |
-| Median absolute Einstein-radius error | 0.014763″ |
-| Mean ground-truth reconstruction MAE | 0.00090402 |
-| Mean CNN reconstruction MAE | 0.00090494 |
-| Mean ground-truth reconstruction RMSE | 0.00117784 |
-| Mean CNN reconstruction RMSE | 0.00118010 |
-
-The CNN-based reconstructions had slightly higher mean residuals than the ground-truth reconstructions in this sample.
-
-The differences were small, but this should not be interpreted as proof that the CNN has recovered the exact physical configuration.
-
-Image residuals are affected by observational noise and by the difference between deterministic model images and noisy observations.
-
-Direct Einstein-radius error therefore remains an important independent evaluation measure.
-
-#### Visual Validation
-
-The validation experiment included comparisons of:
-
-- Original noisy observations
-- Ground-truth reconstructions
-- CNN-predicted reconstructions
-- Ground-truth residual images
-- CNN reconstruction residual images
-
-The figure below contains three representative observations: a low-error case, a typical case, and the highest-error case from the selected validation sample.
-
-![Dataset V0 reconstruction validation examples](FM2/results/validation_examples.png)
-
-#### Validation Interpretation
-
-The results establish that:
-
-- CNN₁ predictions can be passed successfully into FM2.
-- The physical reconstruction pipeline operates across the selected Einstein-radius range.
-- Predicted-parameter reconstructions are numerically comparable to ground-truth reconstructions in this controlled experiment.
-- Direct parameter error and image residuals provide complementary evaluation information.
-
-This is an initial integration and reconstruction-validation experiment, not a comprehensive scientific validation.
-
-The experiment does not establish robustness to additional lens or source variations, parameter degeneracies, different observational conditions, or real astronomical observations.
-
-The detailed methodology, selected examples, quantitative results, and limitations are documented in:
-
-[Dataset V0 — Reconstruction Validation](docs/dataset_v0_validation.md)
-
-This completes the initial reconstruction-validation milestone for Dataset V0. Broader tests involving additional physical variation and parameter degeneracies remain future work.
+Quantitative residual evaluation and broader reconstruction validation remain ongoing.
 
 ---
 
@@ -722,8 +673,7 @@ The Dataset V0 reconstruction-validation report is available here:
 
 ### Gravitational-Lensing Modelling
 
-1. Birrer, S., & Amara, A. (2018). *lenstronomy: Multi-purpose gravitational lens modelling software package*. Physics of the Dark Universe, 22, 189–201.
-
+1. Birrer, S., & Amara, A. (2018). *lenstronomy: Multi-purpose gravitational lens modelling software package*. Physics of the Dark Universe, 22, 189–201.  
    DOI: https://doi.org/10.1016/j.dark.2018.11.002
 
 2. Birrer, S., et al. (2021). *lenstronomy II: A gravitational lensing software ecosystem*. Journal of Open Source Software.

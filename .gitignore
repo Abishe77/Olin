@@ -1,6 +1,16 @@
+# Generated datasets
 datasets/
+
+# Python cache
 __pycache__/
 *.pyc
+
+# Model artifacts
 training/models/
+training/results/cnn_1/predictions.npy
+training/results/cnn_1/predictions_cnn_0.npy
+
+# FM2 generated artifacts
 FM2/cnn1_prediction.npz
+FM2/validation_data.npz
 FM2/results/
