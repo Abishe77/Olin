@@ -1,16 +1,69 @@
-# Generated datasets
-datasets/
 
 # Python cache
 __pycache__/
-*.pyc
+*.py[cod]
+.pytest_cache/
 
-# Model artifacts
+# Virtual environments
+.venv/
+venv/
+
+# Local environment configuration
+.env
+.env.*
+!.env.example
+
+# Local test outputs
+inference/test_*.json
+
+# Generated datasets
+datasets/
+
+# Trained model artifacts
 training/models/
-training/results/cnn_1/predictions.npy
-training/results/cnn_1/predictions_cnn_0.npy
 
-# FM2 generated artifacts
-FM2/cnn1_prediction.npz
-FM2/validation_data.npz
+# Large generated uncertainty arrays
+training/results/v3_resnet18/uncertainty/mc_predictions.npy
+
+# Generated inference outputs
+inference/results/
+
+# FM1 generated analysis outputs
+FM1/compensation_results/
+FM1/sensitivity_results/
+
+# FM2 generated outputs
 FM2/results/
+FM2/*.npz
+
+# Temporary files
+*.tmp
+*.log
+
+# Local exploratory input
+/Sample.png
+
+
+# HE0435 exploratory outputs
+real_data/HE0435-1223/comparison.png
+real_data/HE0435-1223/exploratory_inference.json
+real_data/HE0435-1223/exploratory_input_160.png
+real_data/HE0435-1223/exploratory_mc_predictions.npy
+real_data/HE0435-1223/exploratory_model_input.npy
+real_data/HE0435-1223/reconstructed_HE0435.npy
+real_data/HE0435-1223/reconstructed_HE0435.png
+real_data/HE0435-1223/reconstruction_comparison.png
+
+# V0 generated diagnostics and predictions
+training/results/v0_cnn_1/diagnostics/
+training/results/v0_cnn_1/predictions.npy
+training/results/v0_cnn_1/predictions_cnn_0.npy
+training/results/v0_cnn_1/*.png
+
+# V1 generated diagnostics
+training/results/v1_cnn_1/diagnostics/
+
+# V2 generated diagnostics and raw prediction arrays
+training/results/v2_multoutput/diagnostics/
+training/results/v2_multoutput/y_test_predictions.npy
+training/results/v2_multoutput/y_test_true.npy

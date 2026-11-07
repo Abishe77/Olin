@@ -1,0 +1,62 @@
+{
+    "theta_E": {
+        "MAE": 0.036664675856268876,
+        "RMSE": 0.04866133433646598,
+        "calibration_factor": 0.483277162634801,
+        "mean_raw_uncertainty": 0.09149564604969124,
+        "mean_calibrated_uncertainty": 0.04421775621633282,
+        "error_uncertainty_correlation": 0.10740797663638707,
+        "raw_1sigma_coverage": 0.931,
+        "raw_2sigma_coverage": 0.993,
+        "calibrated_1sigma_coverage": 0.682,
+        "calibrated_2sigma_coverage": 0.92
+    },
+    "e1": {
+        "MAE": 0.03716988030459939,
+        "RMSE": 0.04716020929126132,
+        "calibration_factor": 1.4361501806749017,
+        "mean_raw_uncertainty": 0.03318432447893926,
+        "mean_calibrated_uncertainty": 0.047657673596003196,
+        "error_uncertainty_correlation": 0.09799447698333623,
+        "raw_1sigma_coverage": 0.509,
+        "raw_2sigma_coverage": 0.835,
+        "calibrated_1sigma_coverage": 0.687,
+        "calibrated_2sigma_coverage": 0.923
+    },
+    "e2": {
+        "MAE": 0.036585393765230206,
+        "RMSE": 0.04761362951197659,
+        "calibration_factor": 1.4529056148967134,
+        "mean_raw_uncertainty": 0.03301574750733111,
+        "mean_calibrated_uncertainty": 0.04796876493341354,
+        "error_uncertainty_correlation": -0.008867065713799747,
+        "raw_1sigma_coverage": 0.545,
+        "raw_2sigma_coverage": 0.817,
+        "calibrated_1sigma_coverage": 0.691,
+        "calibrated_2sigma_coverage": 0.916
+    },
+    "gamma1": {
+        "MAE": 0.01683933119550368,
+        "RMSE": 0.021320872197864143,
+        "calibration_factor": 2.1862068826321615,
+        "mean_raw_uncertainty": 0.010459799494060064,
+        "mean_calibrated_uncertainty": 0.022867285644866512,
+        "error_uncertainty_correlation": 0.005618814356639208,
+        "raw_1sigma_coverage": 0.385,
+        "raw_2sigma_coverage": 0.655,
+        "calibrated_1sigma_coverage": 0.698,
+        "calibrated_2sigma_coverage": 0.93
+    },
+    "gamma2": {
+        "MAE": 0.018252204302494513,
+        "RMSE": 0.023926829191976834,
+        "calibration_factor": 2.200475646471203,
+        "mean_raw_uncertainty": 0.010462021682101977,
+        "mean_calibrated_uncertainty": 0.023021423924319086,
+        "error_uncertainty_correlation": -0.02755949885951146,
+        "raw_1sigma_coverage": 0.378,
+        "raw_2sigma_coverage": 0.642,
+        "calibrated_1sigma_coverage": 0.68,
+        "calibrated_2sigma_coverage": 0.906
+    }
+}

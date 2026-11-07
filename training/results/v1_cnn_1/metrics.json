@@ -1,0 +1,6 @@
+{
+    "test_mse": 0.014322339557111263,
+    "test_mae": 0.08820253610610962,
+    "epochs_trained": 17,
+    "best_validation_mae": 0.09035526216030121
+}

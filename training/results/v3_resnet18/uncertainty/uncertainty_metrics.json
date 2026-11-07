@@ -1,0 +1,42 @@
+{
+    "theta_E": {
+        "MAE": 0.03643175662270447,
+        "RMSE": 0.0487515212591977,
+        "mean_uncertainty": 0.09170798297026107,
+        "error_uncertainty_correlation": 0.12058583682469962,
+        "coverage_1sigma": 0.928,
+        "coverage_2sigma": 0.992
+    },
+    "e1": {
+        "MAE": 0.03693654803906799,
+        "RMSE": 0.046999560347296056,
+        "mean_uncertainty": 0.03296506208113197,
+        "error_uncertainty_correlation": 0.0923567767359468,
+        "coverage_1sigma": 0.531,
+        "coverage_2sigma": 0.835
+    },
+    "e2": {
+        "MAE": 0.0362974941170577,
+        "RMSE": 0.04732335878874987,
+        "mean_uncertainty": 0.03316121391911518,
+        "error_uncertainty_correlation": 0.011130534280417395,
+        "coverage_1sigma": 0.538,
+        "coverage_2sigma": 0.827
+    },
+    "gamma1": {
+        "MAE": 0.01688096925439202,
+        "RMSE": 0.021290661896895238,
+        "mean_uncertainty": 0.010401801123422486,
+        "error_uncertainty_correlation": -0.016542610724097722,
+        "coverage_1sigma": 0.364,
+        "coverage_2sigma": 0.668
+    },
+    "gamma2": {
+        "MAE": 0.018300569358286792,
+        "RMSE": 0.023977664931338544,
+        "mean_uncertainty": 0.010432634039233444,
+        "error_uncertainty_correlation": -0.02737720143254939,
+        "coverage_1sigma": 0.378,
+        "coverage_2sigma": 0.641
+    }
+}
