@@ -70,19 +70,19 @@ In strong gravitational lensing, this can produce structures such as Einstein ri
 
 The physical process can be represented by the lens equation:
 
-\[
+$$
 \boldsymbol{\beta}
 =
 \boldsymbol{\theta}
 -
 \boldsymbol{\alpha}(\boldsymbol{\theta})
-\]
+$$
 
 where:
 
-- \(\boldsymbol{\beta}\) represents the source-plane position.
-- \(\boldsymbol{\theta}\) represents the observed image-plane position.
-- \(\boldsymbol{\alpha}\) represents the gravitational deflection angle.
+- $\boldsymbol{\beta}$ represents the source-plane position.
+- $\boldsymbol{\theta}$ represents the observed image-plane position.
+- $\boldsymbol{\alpha}$ represents the gravitational deflection angle.
 
 The forward problem uses a known lens mass distribution and source configuration to calculate the resulting lensed image.
 
@@ -169,7 +169,7 @@ Dataset V0 contains 10,000 synthetic gravitational-lensing observations.
 
 | Parameter | Configuration |
 |---|---|
-| Regression target | Einstein radius \(\theta_E\) |
+| Regression target | Einstein radius $\theta_E$ |
 | Einstein-radius range | 1.6–2.8 arcseconds |
 | Image dimensions | 160 × 160 |
 | Pixel scale | 0.05 arcseconds/pixel |
@@ -190,11 +190,11 @@ Dataset V1 extends the physical variation beyond the Einstein radius.
 
 The dataset contains 10,000 observations with the following supervised targets:
 
-- Einstein radius (\(\theta_E\))
-- Lens ellipticity component 1 (\(e_1\))
-- Lens ellipticity component 2 (\(e_2\))
-- External shear component 1 (\(\gamma_1\))
-- External shear component 2 (\(\gamma_2\))
+- Einstein radius ($\theta_E$)
+- Lens ellipticity component 1 ($e_1$)
+- Lens ellipticity component 2 ($e_2$)
+- External shear component 1 ($\gamma_1$)
+- External shear component 2 ($\gamma_2$)
 
 The dataset includes additional variations in lens ellipticity, external shear and lens-centre position.
 
@@ -280,9 +280,9 @@ A multi-output regression model was developed to investigate simultaneous estima
 
 The model predicts:
 
-\[
+$$
 [\theta_E,e_1,e_2,\gamma_1,\gamma_2]
-\]
+$$
 
 This experiment investigates whether a shared image representation can learn multiple related physical parameters.
 
@@ -337,11 +337,11 @@ The following metrics were obtained on the held-out test dataset.
 
 | Parameter | MAE | R² |
 |---|---:|---:|
-| Einstein radius (\(\theta_E\)) | 0.034362 | 0.983177 |
-| Ellipticity (\(e_1\)) | 0.036626 | 0.882142 |
-| Ellipticity (\(e_2\)) | 0.036234 | 0.877282 |
-| Shear (\(\gamma_1\)) | 0.016809 | 0.754748 |
-| Shear (\(\gamma_2\)) | 0.018192 | 0.689337 |
+| Einstein radius ($\theta_E$) | 0.034362 | 0.983177 |
+| Ellipticity ($e_1$) | 0.036626 | 0.882142 |
+| Ellipticity ($e_2$) | 0.036234 | 0.877282 |
+| Shear ($\gamma_1$) | 0.016809 | 0.754748 |
+| Shear ($\gamma_2$) | 0.018192 | 0.689337 |
 
 The results indicate that the model performs strongly on Einstein-radius estimation within the synthetic validation domain.
 
@@ -425,9 +425,9 @@ The reconstruction does not introduce a separate neural image-generation model.
 
 The image residual is defined as:
 
-\[
+$$
 R(x,y)=I_{\mathrm{observed}}(x,y)-I_{\mathrm{reconstructed}}(x,y)
-\]
+$$
 
 Residual analysis helps investigate differences between the observed image and the reconstruction.
 
