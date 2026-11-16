@@ -14,9 +14,9 @@ Unlike a conventional image-classification project, Olin treats deep learning as
 
 ## Project Status
 
-**Active Development — Scientific Inference Pipeline Completed; Application Development in Progress**
+**Active Development — Scientific Inference Pipeline and Core Backend Implemented; Frontend Integration Pending**
 
-Olin has progressed from a controlled one-parameter synthetic experiment to multi-parameter inference, uncertainty estimation, reconstruction, exploratory real-observation testing, and automated scientific reporting.
+Olin has progressed from a controlled one-parameter synthetic experiment to multi-parameter inference, uncertainty estimation, reconstruction, exploratory real-observation testing, automated scientific reporting, and an authenticated application backend.
 
 ### Completed
 
@@ -37,18 +37,29 @@ Olin has progressed from a controlled one-parameter synthetic experiment to mult
 - V3 ResNet-18 multi-parameter inference
 - Monte Carlo uncertainty estimation and calibration
 - Image preprocessing for PNG, JPEG and WebP inputs
-- Inference and reconstruction pipeline
+- Integrated inference and reconstruction pipeline
 - Automated scientific PDF report generation
 - Exploratory inference using a real astronomical observation
+- FastAPI backend implementation
+- PostgreSQL database integration
+- User registration and authentication
+- Email verification and password-reset workflows
+- Google OAuth integration
+- Access and refresh token handling
+- Rate limiting for protected operations
+- Ownership-based analysis and report access
+- Image upload and inference API integration
+- Analysis creation, listing and retrieval endpoints
+- PDF report generation, listing and download endpoints
+- Initial backend testing and end-to-end workflow verification
 
 ### Current Development
 
-- FastAPI application foundation
-- PostgreSQL database integration
-- Authentication and ownership-based access
-- Upload and inference API integration
-- Protected analysis and report retrieval
-- Application-level testing and reproducibility
+- Frontend development and integration
+- Additional API security and authorization testing
+- Expanded automated integration testing
+- Complete user-facing workflow testing
+- Application deployment preparation
 
 ### Future Directions
 
@@ -238,29 +249,29 @@ CNN₀ establishes the initial regression baseline.
 
 ```text
 Input: 160 × 160 × 1
-          |
-          v
+         |
+         v
 Conv2D — 16 filters, 3×3, ReLU
-          |
-          v
+         |
+         v
 MaxPooling — 2×2
-          |
-          v
+         |
+         v
 Conv2D — 32 filters, 3×3, ReLU
-          |
-          v
+         |
+         v
 MaxPooling — 2×2
-          |
-          v
+         |
+         v
 Flatten
-          |
-          v
+         |
+         v
 Dense — 64, ReLU
-          |
-          v
+         |
+         v
 Dense — 1
-          |
-          v
+         |
+         v
 Predicted Einstein Radius
 ```
 
@@ -392,21 +403,21 @@ FM2 uses inferred physical parameters to generate a reconstruction through the e
 
 ```text
 Original Observation
-        |
-        v
-   V3 Inference
-        |
-        v
- Predicted Parameters
-        |
-        v
-       FM2
-        |
-        v
+       |
+       v
+  V3 Inference
+       |
+       v
+Predicted Parameters
+       |
+       v
+      FM2
+       |
+       v
 Physics-Based Reconstruction
-        |
-        v
- Reconstruction and Residual Analysis
+       |
+       v
+Reconstruction and Residual Analysis
 ```
 
 ### Reconstruction Process
@@ -507,35 +518,35 @@ Synthetic `.npy` inputs are reserved for internal controlled validation rather t
 
 ```text
 Input Image
-    |
-    v
+   |
+   v
 Image Validation
-    |
-    v
+   |
+   v
 Image Preprocessing
-    |
-    v
+   |
+   v
 160 × 160 Model Input
-    |
-    v
+   |
+   v
 V3 Model Inference
-    |
-    v
+   |
+   v
 Physical Parameter Predictions
-    |
-    v
+   |
+   v
 Uncertainty Estimation
-    |
-    v
+   |
+   v
 FM2 Reconstruction
-    |
-    v
+   |
+   v
 Residual Analysis
-    |
-    v
+   |
+   v
 Scientific Results
-    |
-    v
+   |
+   v
 PDF Report Generation
 ```
 
@@ -552,50 +563,53 @@ The reporting component generates a PDF containing relevant analysis outputs, in
 - Relevant inference and reconstruction details
 - Limitations and reproducibility information
 
-The pipeline stores generated results in its local results directory during development.
-
-The application is intended to expose reports through protected, ownership-checked retrieval rather than public filesystem access.
+The application stores generated reports separately from database metadata and exposes them through authenticated, ownership-checked retrieval.
 
 ---
 
 ## 10. Application Architecture — Olin Web Application
 
-The scientific inference pipeline is being integrated into a web application.
+The scientific inference pipeline is integrated into a FastAPI application.
 
-The application separates user-facing functionality from the scientific inference implementation.
+The backend separates user-facing application functionality from the scientific inference implementation.
 
-### Planned Architecture
+### Current Backend Architecture
 
 ```text
-              User
-               |
-               v
-       HTML / CSS / JavaScript
-               |
-               v
-            FastAPI
-               |
-       +-------+-------+
-       |               |
-       v               v
- Authentication   Analysis API
-       |               |
-       v               v
-   PostgreSQL     Inference Pipeline
-                       |
-                 +-----+-----+
-                 |           |
-                 v           v
-               V3 Model     FM2
-                 |           |
-                 +-----+-----+
-                       |
-                       v
-                Scientific Report
-                       |
-                       v
-                Protected Retrieval
+                  User
+                   |
+                   v
+          Future Web Frontend
+                   |
+                   v
+                FastAPI
+                   |
+          +--------+--------+
+          |                 |
+          v                 v
+    Authentication     Analysis API
+          |                 |
+          v                 v
+      PostgreSQL      Inference Pipeline
+                            |
+                      +-----+-----+
+                      |           |
+                      v           v
+                   V3 Model      FM2
+                      |           |
+                      +-----+-----+
+                            |
+                            v
+                   Scientific Report
+                            |
+                            v
+                    Private Storage
+                            |
+                            v
+                  Protected Retrieval
 ```
+
+The backend is implemented. The user-facing frontend is still pending.
 
 ### Application Technologies
 
@@ -603,43 +617,57 @@ The application separates user-facing functionality from the scientific inferenc
 |---|---|
 | Backend API | FastAPI |
 | Database | PostgreSQL |
-| Frontend | HTML, CSS, JavaScript |
+| Frontend (planned) | HTML, CSS, JavaScript |
 | Scientific inference | TensorFlow / Keras |
 | Image processing | Pillow, NumPy |
 | Gravitational-lens modelling | lenstronomy |
 | PDF generation | ReportLab |
+| Authentication | JWT-based authentication, Google OAuth |
 | Version control | Git / GitHub |
 
-### Application Responsibilities
+### Authentication and Security
 
-**Authentication**
+The backend implements:
 
-- Email and password authentication
-- Google OAuth
+- User registration
 - Email verification
-- Password reset
+- Email and password authentication
+- Google OAuth integration
+- Password-reset workflow
 - Access and refresh token handling
+- Protected API endpoints
+- Rate limiting for selected operations
+- Ownership-based access control for analyses and reports
 
-**Image analysis**
+Authentication and ownership checks are handled separately from the scientific inference implementation.
 
-- Image upload and validation
-- Preprocessing
-- Model inference
-- Uncertainty estimation
-- Physics-based reconstruction
+### Analysis Management
 
-**Scientific reporting**
+Authenticated users can:
 
-- PDF report generation
-- Analysis metadata
-- Reproducibility information
-- Protected report retrieval
+- Submit an image for analysis.
+- Retrieve their analyses.
+- List their analyses.
+- Generate a PDF report for a completed analysis.
+- List their generated reports.
+- Download their reports.
 
-**Data management**
+The backend associates analysis and report records with their respective users and checks ownership when retrieving protected resources.
 
-- User and analysis associations
-- Report references and metadata
-- Ownership-based access control
+### Implemented API Endpoints
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| POST | `/analyses` | Upload an image and create an analysis |
+| GET | `/analyses` | List the authenticated user's analyses |
+| GET | `/analyses/{analysis_id}` | Retrieve a particular analysis |
+| POST | `/analyses/{analysis_id}/report` | Generate a report for an analysis |
+| GET | `/reports` | List the authenticated user's reports |
+| GET | `/reports/{report_id}/download` | Download a report PDF |
+
+Protected endpoints require authentication.
+
+The API also exposes its OpenAPI documentation through FastAPI's documentation interface during development.
 
 ### Architectural Principles
 
@@ -648,9 +676,8 @@ The application separates user-facing functionality from the scientific inferenc
 - Use PostgreSQL for persistent application metadata.
 - Store generated report files separately from database metadata.
 - Enforce ownership checks for analysis and report retrieval.
+- Apply rate limits to selected sensitive operations.
 - Keep the initial backend architecture simple and avoid unnecessary distributed infrastructure.
-
-The application is currently under development. Planned application functionality should not be confused with completed scientific inference functionality.
 
 ---
 
@@ -683,10 +710,24 @@ Olin/
 ├── Documents and updations/
 │
 ├── olin_app/
+│   ├── auth.py
+│   ├── database.py
+│   ├── email_service.py
+│   ├── main.py
+│   ├── rate_limit.py
+│   ├── schemas.py
+│   ├── security.py
+│   ├── database/
+│   │   └── schema.sql
+│   └── tests/
+│
+├── private_storage/
 │
 ├── README.md
 └── .gitignore
 ```
+
+The structure above represents the major project components; individual local directories and generated artifacts may vary.
 
 ### Component Responsibilities
 
@@ -724,9 +765,13 @@ Contain scientific software documentation, experiment reports and project docume
 
 **Olin App**
 
-Contains the application backend and database integration.
+Contains the application backend, authentication, database integration, API endpoints and automated tests.
 
-Generated datasets, model weights, temporary prediction files and other large derived artifacts are excluded from version control where appropriate.
+**Private Storage**
+
+Contains application-generated files that should remain outside public version control.
+
+Generated datasets, model weights, temporary prediction files, private reports and other large or sensitive derived artifacts are excluded from version control where appropriate.
 
 ---
 
@@ -778,6 +823,8 @@ Olin follows several principles throughout development.
 - Uncertainty calibration is based on synthetic validation data.
 - Reconstruction similarity alone cannot establish physical correctness.
 - Parameter degeneracies and out-of-distribution behaviour require further investigation.
+- The web frontend has not yet been integrated.
+- Additional authorization, security and deployment testing remains necessary.
 
 ---
 
@@ -803,11 +850,12 @@ The Gaia catalogue is not currently a direct training dataset for Olin's image-b
 
 ### Application Development
 
-- Complete the FastAPI application.
-- Finalize database schema and authentication.
-- Integrate the scientific inference pipeline with the API.
-- Implement protected analysis and report retrieval.
-- Test the complete user workflow.
+- Develop and integrate the user-facing frontend.
+- Complete frontend-to-backend workflow integration.
+- Expand automated integration and authorization testing.
+- Improve operational error handling and deployment configuration.
+- Validate the complete application workflow.
+- Prepare the application for deployment.
 
 Future development will prioritize scientific validity, reproducibility and reliable software integration rather than simply increasing model complexity or application features.
 
