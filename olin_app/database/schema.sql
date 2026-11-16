@@ -378,6 +378,23 @@ ALTER TABLE ONLY public.reports
     ADD CONSTRAINT reports_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 
+CREATE TABLE public.rate_limits (
+    id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    rate_key character varying(255) NOT NULL,
+    window_start timestamp with time zone NOT NULL,
+    attempts integer NOT NULL DEFAULT 1,
+
+    CONSTRAINT nonnegative_rate_limit_attempts
+        CHECK (attempts >= 0),
+
+    CONSTRAINT unique_rate_limit_window
+        UNIQUE (rate_key, window_start)
+);
+
+CREATE INDEX idx_rate_limits_window_start
+ON public.rate_limits (window_start);
+
+
 --
 -- PostgreSQL database dump complete
 --

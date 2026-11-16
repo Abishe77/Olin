@@ -45,6 +45,8 @@ FM2/*.npz
 
 
 # HE0435 exploratory outputs
+# Real astronomical observation files
+real_data/HE0435-1223/
 real_data/HE0435-1223/comparison.png
 real_data/HE0435-1223/exploratory_inference.json
 real_data/HE0435-1223/exploratory_input_160.png
@@ -67,3 +69,9 @@ training/results/v1_cnn_1/diagnostics/
 training/results/v2_multoutput/diagnostics/
 training/results/v2_multoutput/y_test_predictions.npy
 training/results/v2_multoutput/y_test_true.npy
+
+#Pprivate runtime data
+private_storage/
+
+#Local test images
+test_images/

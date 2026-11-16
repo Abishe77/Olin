@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parent.parent
 RESULTS_DIR = ROOT / "inference" / "results"
 
 
-def run_pipeline(image_path):
+def run_pipeline(image_path , analysis_id=None , generate_report_pdf = True):
     image_path = Path(image_path)
 
     if not image_path.exists():
@@ -43,8 +43,11 @@ def run_pipeline(image_path):
     # Create output directory.
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
-    output_dir = RESULTS_DIR / image_path.stem
-    output_dir.mkdir(parents=True, exist_ok=True)
+    if analysis_id is not None:
+        output_dir = RESULTS_DIR / str(analysis_id)
+    else:
+        output_dir = RESULTS_DIR / image_path.stem
+    output_dir.mkdir(parents=True , exist_ok= True)        
 
     # Save reconstruction and residual.
     reconstruction_path = output_dir / "reconstructed_image.npy"
@@ -98,13 +101,15 @@ def run_pipeline(image_path):
     with open(report_path, "w") as file:
         json.dump(report, file, indent=4)
 
-    pdf_path = output_dir / "report.pdf"
+    pdf_path = None
 
-    generate_pdf(
-    image_path=image_path,
-    report=report,
-    output_path=pdf_path
-    )    
+    if generate_report_pdf:
+        pdf_path = output_dir / "report.pdf"
+        generate_pdf(
+            image_path= image_path,
+            report= report,
+            output_path= pdf_path
+        )  
 
     print("\nOLIN PIPELINE ")
     print("Input:", image_path.name)
@@ -123,7 +128,10 @@ def run_pipeline(image_path):
 
     print("\nOptimizer success:", reconstruction_result["optimizer"]["success"])
     print("Report saved:", report_path)
-    print("PDF Report saved: ",pdf_path)
+
+    if pdf_path is not None:
+        print("PDF Report saved: ",pdf_path)
+        
     return report
 
 

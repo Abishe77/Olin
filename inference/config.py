@@ -5,6 +5,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
+MODEL_VERSION = "v3_resnet18"
+
 DATASET_METADATA_PATH = (
     ROOT / "datasets" / "dataset_v1" / "preprocessing_metadata.json"
 )
