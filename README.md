@@ -1,85 +1,68 @@
 # Olin
 
-## A Scientific Machine Learning Project for Inverse Inference in Strong Gravitational Lensing
+**Olin** is a scientific machine-learning application exploring **inverse inference in strong gravitational lensing**.
 
-Olin explores the use of computer vision and deep learning to infer physical parameters of gravitational lenses from astronomical observations.
+The project investigates whether a computer-vision model can infer selected physical lens parameters from astronomical observations and examine those estimates through an established gravitational-lensing forward model.
 
-The project combines established gravitational-lensing physics, synthetic observation generation, supervised deep learning, uncertainty estimation, and physics-based image reconstruction into a scientific inverse-inference pipeline.
+![Olin Galaxy Animation](docs/images/olin-galaxy.gif)
 
-**Physical Parameters → Gravitational Lensing → Synthetic Observations → Deep Learning Inference → Physics-Based Reconstruction → Scientific Reporting**
+> **Physical parameters → Gravitational lensing → Synthetic observation → Deep-learning inference → Physics-based reconstruction**
 
-Unlike a conventional image-classification project, Olin treats deep learning as a tool for investigating an established scientific inverse problem.
-
----
+Olin connects gravitational-lensing physics with a machine-learning inference pipeline and an integrated web application for analysing compatible astronomical images.
 
 ## Project Status
 
-**Active Development — Scientific Inference Pipeline and Core Backend Implemented; Frontend Integration Pending**
+**Olin V1 — Core Scientific Pipeline and Integrated Web Application Implemented**
 
-Olin has progressed from a controlled one-parameter synthetic experiment to multi-parameter inference, uncertainty estimation, reconstruction, exploratory real-observation testing, automated scientific reporting, and an authenticated application backend.
+The first complete application version brings together the scientific inference pipeline, authenticated user workflows, analysis visualisation, and PDF reporting.
 
 ### Completed
 
-- First-principles gravitational-lensing physics experiments
-- Singular Isothermal Ellipsoid (SIE) lens modelling
-- Elliptical Sérsic source modelling
-- External shear modelling
-- PSF-based observation modelling
-- Photon-counting and detector read-noise simulation
-- FM1 synthetic observation generation
-- Dataset V0 containing 10,000 labelled observations
-- CNN₀ baseline and CNN₁ improved regression experiments
-- CNN₀ vs CNN₁ quantitative evaluation
-- FM2 deterministic physics-based reconstruction
-- Ground-truth control reconstruction and residual analysis
-- Dataset V1 with additional physical parameter variation
-- Multi-output regression experiments
-- V3 ResNet-18 multi-parameter inference
-- Monte Carlo uncertainty estimation and calibration
-- Image preprocessing for PNG, JPEG and WebP inputs
-- Integrated inference and reconstruction pipeline
-- Automated scientific PDF report generation
-- Exploratory inference using a real astronomical observation
-- FastAPI backend implementation
-- PostgreSQL database integration
-- User registration and authentication
-- Email verification and password-reset workflows
-- Google OAuth integration
-- Access and refresh token handling
-- Rate limiting for protected operations
-- Ownership-based analysis and report access
-- Image upload and inference API integration
-- Analysis creation, listing and retrieval endpoints
-- PDF report generation, listing and download endpoints
-- Initial backend testing and end-to-end workflow verification
+- First-principles gravitational-lensing experiments.
+- Singular Isothermal Ellipsoid (SIE) lens modelling.
+- Elliptical Sérsic source modelling.
+- External shear.
+- PSF-based observation modelling.
+- Photon-counting and detector read-noise simulation.
+- FM1 synthetic observation generation.
+- Synthetic dataset generation and preparation.
+- CNN₀ and CNN₁ Einstein-radius regression experiments.
+- Multi-output physical parameter inference.
+- V3 ResNet-18 model for five-parameter inference.
+- Monte Carlo dropout uncertainty estimation.
+- Uncertainty calibration using synthetic validation data.
+- FM2 physics-based reconstruction.
+- Residual generation and analysis.
+- Exploratory testing using a real astronomical observation.
+- FastAPI backend and PostgreSQL integration.
+- User authentication and account workflows.
+- Image upload and analysis creation.
+- Analysis history and individual analysis viewing.
+- Prediction and uncertainty presentation.
+- Reconstruction and residual visualisation.
+- Scientific PDF report generation and retrieval.
+- Integrated frontend and backend workflow.
 
 ### Current Development
 
-- Frontend development and integration
-- Additional API security and authorization testing
-- Expanded automated integration testing
-- Complete user-facing workflow testing
-- Application deployment preparation
+The core V1 application is implemented. Further work is focused on:
 
-### Future Directions
+- Deployment preparation.
+- Additional integration and security testing.
+- Evaluation on a broader range of real astronomical observations.
+- Further scientific validation and model generalisation experiments.
 
-- More rigorous validation using real astronomical observations
-- Evaluation against additional observational datasets
-- Investigation of parameter degeneracies and distribution shifts
-- Improved real-observation compatibility
-- Possible Gaia Focused Product Release evaluation in a future version
+## Scientific Objective
 
-The current synthetic experiments provide controlled quantitative validation. Exploratory inference on real astronomical images is not yet evidence of general-purpose accuracy on observational data.
+Gravitational lensing is a physical process in which the gravitational field of a foreground mass changes the path followed by light from a more distant source.
 
----
+Olin approaches the inverse problem:
 
-## 1. Scientific Objective
+> Given an observed gravitationally lensed image, can a machine-learning model estimate selected physical parameters of the lens system?
 
-Gravitational lensing occurs when the gravitational field of a foreground mass distribution alters the apparent position and brightness distribution of light from a background source.
+The forward problem starts with known physical parameters and generates an observation. The inverse problem attempts to recover selected parameters from that observation.
 
-In strong gravitational lensing, this can produce structures such as Einstein rings, arcs, and multiple images.
-
-The physical process can be represented by the lens equation:
+The gravitational lens equation is:
 
 $$
 \boldsymbol{\beta}
@@ -92,803 +75,431 @@ $$
 where:
 
 - $\boldsymbol{\beta}$ represents the source-plane position.
-- $\boldsymbol{\theta}$ represents the observed image-plane position.
-- $\boldsymbol{\alpha}$ represents the gravitational deflection angle.
+- $\boldsymbol{\theta}$ represents the image-plane position.
+- $\boldsymbol{\alpha}(\boldsymbol{\theta})$ represents the deflection angle.
 
-The forward problem uses a known lens mass distribution and source configuration to calculate the resulting lensed image.
+The inverse problem is challenging because different physical configurations can produce similar observed image structures. Olin investigates a constrained version of this problem using supervised deep learning and physics-based reconstruction.
 
-Olin investigates the corresponding inverse problem:
+## Forward Model — FM1
 
-> Given an observed lensed image, can a machine-learning model infer the physical parameters responsible for generating it?
+The production forward model uses established gravitational-lensing implementations from `lenstronomy`.
 
-The project progressively investigates this problem, beginning with Einstein-radius estimation and extending to multiple physical parameters.
+The lens model combines:
 
-Olin does not attempt to introduce new gravitational-lensing physics. It uses established physical models to investigate machine-learning-based inverse inference.
+- Singular Isothermal Ellipsoid (SIE).
+- External shear.
 
----
+The background source is represented by an elliptical Sérsic profile.
 
-## 2. Physical Forward Model — FM1
-
-FM1 is the synthetic observation generation component of Olin.
-
-It converts physical lens and source parameters into simulated astronomical observations.
-
-The production forward model uses established gravitational-lensing implementations provided by [lenstronomy](https://github.com/lenstronomy/lenstronomy).
-
-### Forward Simulation Pipeline
+The observation pipeline follows:
 
 ```text
-Lens Parameters
+Lens parameters
       +
-Source Parameters
-      |
-      v
-Gravitational Lensing
-      |
-      v
-Ideal Lensed Image
-      |
-      v
-Observation Effects
-      |
-      v
-Point Spread Function (PSF)
-      |
-      v
-Photon-Counting Noise
-      |
-      v
-Detector Read Noise
-      |
-      v
-Synthetic Observation
+Source parameters
+      ↓
+Gravitational lensing
+      ↓
+Ideal lensed image
+      ↓
+PSF convolution
+      ↓
+Photon-counting noise
+      ↓
+Detector read noise
+      ↓
+Synthetic observation
 ```
 
-### Physical Configuration
+The controlled observation model includes:
 
-**Lens model**
+- Image size: 160 × 160 pixels.
+- Pixel scale: 0.05 arcseconds per pixel.
+- Field of view: 8 × 8 arcseconds.
+- Gaussian PSF with 0.4 arcsecond FWHM.
+- Photon-counting noise.
+- Gaussian detector read noise.
 
-- Singular Isothermal Ellipsoid (SIE)
-- External shear
+The observation model is intentionally controlled. It is not intended to represent every instrumental or observational effect present in real astronomical data.
 
-**Background source**
+## Synthetic Datasets
 
-- Elliptical Sérsic brightness profile
+Synthetic observations provide known ground-truth parameters, making controlled quantitative evaluation possible.
 
-**Observation model**
+### Dataset V0
 
-- Image dimensions: 160 × 160 pixels
-- Pixel scale: 0.05 arcseconds per pixel
-- Field of view: 8 × 8 arcseconds
-- Gaussian PSF with 0.4 arcsecond FWHM
-- Photon-counting noise
-- Gaussian detector read noise
-
-The observation model is intentionally controlled. It is not intended to represent a complete telescope or detector simulator.
-
----
-
-## 3. Synthetic Datasets
-
-Synthetic observations provide an important advantage during initial model development: the physical parameters used to generate each image are known.
-
-This allows inferred parameters to be evaluated directly against their ground-truth values.
-
-### Dataset V0 — Controlled Einstein-Radius Inference
-
-Dataset V0 contains 10,000 synthetic gravitational-lensing observations.
+The initial dataset was designed to isolate the relationship between Einstein radius and image morphology.
 
 | Parameter | Configuration |
 |---|---|
-| Regression target | Einstein radius $\theta_E$ |
+| Prediction target | Einstein radius ($\theta_E$) |
 | Einstein-radius range | 1.6–2.8 arcseconds |
-| Image dimensions | 160 × 160 |
+| Image size | 160 × 160 |
 | Pixel scale | 0.05 arcseconds/pixel |
 | Field of view | 8 × 8 arcseconds |
 | Lens model | SIE + external shear |
 | Source model | Elliptical Sérsic |
 | Dataset size | 10,000 |
-| Training samples | 8,000 |
-| Validation samples | 1,000 |
-| Test samples | 1,000 |
+| Train / validation / test | 8,000 / 1,000 / 1,000 |
 | Random seed | 42 |
 
-The initial dataset varied the Einstein radius while keeping the remaining physical and observational parameters controlled.
+### Dataset V1
 
-### Dataset V1 — Multi-Parameter Inference
+Dataset V1 introduces additional physical variation to make the inverse problem more challenging.
 
-Dataset V1 extends the physical variation beyond the Einstein radius.
+The dataset contains 10,000 synthetic observations and includes variation in:
 
-The dataset contains 10,000 observations with the following supervised targets:
+- Einstein radius.
+- Lens ellipticity components.
+- External shear components.
+- Lens centre coordinates.
+- Sérsic source properties.
 
-- Einstein radius ($\theta_E$)
-- Lens ellipticity component 1 ($e_1$)
-- Lens ellipticity component 2 ($e_2$)
-- External shear component 1 ($\gamma_1$)
-- External shear component 2 ($\gamma_2$)
+The expanded dataset supports multi-parameter inference rather than restricting the model to a single regression target.
 
-The dataset includes additional variations in lens ellipticity, external shear and lens-centre position.
+Generated datasets and prepared training arrays are excluded from version control.
 
-| Parameter | Configuration |
-|---|---|
-| Dataset size | 10,000 |
-| Training samples | 8,000 |
-| Validation samples | 1,000 |
-| Test samples | 1,000 |
-| Random seed | 42 |
-| Image dimensions | 160 × 160 |
-| Number of prediction targets | 5 |
+## Machine-Learning Experiments
 
-Dataset V1 introduces a more challenging inverse problem because multiple physical parameters can influence the observed image morphology.
-
-### Dataset Preparation
-
-The dataset preparation pipeline:
-
-1. Loads generated images and corresponding physical labels.
-2. Creates reproducible training, validation and test splits.
-3. Calculates normalization statistics using the training data.
-4. Applies the same normalization to validation and test data.
-5. Stores prepared arrays and metadata for model training.
-
-Generated datasets and prepared NumPy arrays are excluded from version control because they are derived experimental data.
-
----
-
-## 4. Machine-Learning Pipeline
-
-Olin uses convolutional neural networks to estimate physical parameters from synthetic gravitational-lensing observations.
-
-The experiments progressed from single-parameter regression to multi-output inference.
+Olin was developed through successive experiments, beginning with a controlled single-parameter baseline and progressing towards multi-parameter inference.
 
 ### CNN₀ — Initial Baseline
 
-CNN₀ establishes the initial regression baseline.
+CNN₀ was developed for continuous Einstein-radius regression.
 
-**Architecture**
+Its architecture consists of convolutional layers, max-pooling, and dense regression layers.
 
-```text
-Input: 160 × 160 × 1
-         |
-         v
-Conv2D — 16 filters, 3×3, ReLU
-         |
-         v
-MaxPooling — 2×2
-         |
-         v
-Conv2D — 32 filters, 3×3, ReLU
-         |
-         v
-MaxPooling — 2×2
-         |
-         v
-Flatten
-         |
-         v
-Dense — 64, ReLU
-         |
-         v
-Dense — 1
-         |
-         v
-Predicted Einstein Radius
-```
+The initial experiment demonstrated that a CNN could learn the relationship between the controlled synthetic observations and the Einstein radius.
 
-CNN₀ provides the initial baseline against which subsequent training improvements are evaluated.
+However, its fixed training schedule allowed validation performance to deteriorate after the early epochs.
 
-### CNN₁ — Improved Regression Model
+**Test results:**
 
-CNN₁ introduces improved training control and validation-based monitoring.
+| Metric | Result |
+|---|---:|
+| Test MAE | 0.111396 arcseconds |
+| Test MSE | 0.01388 |
 
-The training pipeline incorporates early stopping to reduce unnecessary training after validation performance stops improving.
+CNN₀ served as the initial baseline for subsequent training improvements.
 
-CNN₁ achieved substantially better test performance than CNN₀.
+### CNN₁ — Improved Training
 
-### V2 Multi-Output Regression Experiment
+CNN₁ introduced improved training control and early stopping.
 
-A multi-output regression model was developed to investigate simultaneous estimation of five physical parameters.
+| Metric | Result |
+|---|---:|
+| CNN₀ test MAE | 0.111396 |
+| CNN₁ test MAE | 0.019245 |
+| Best validation MAE | 0.018489 |
+| Best epoch | 9 |
 
-The model predicts:
+CNN₁ reduced test MAE by approximately **82.7%** relative to CNN₀.
 
-$$
-[\theta_E,e_1,e_2,\gamma_1,\gamma_2]
-$$
+This experiment established the importance of training control before increasing model complexity.
 
-This experiment investigates whether a shared image representation can learn multiple related physical parameters.
+### V2 — Multi-output Inference
 
-### V3 — ResNet-18 Multi-Parameter Inference
+V2 extended the prediction task to five physical parameters:
 
-V3 uses a ResNet-18 architecture for multi-parameter regression.
+- Einstein radius ($\theta_E$).
+- Lens ellipticity ($e_1$, $e_2$).
+- External shear ($\gamma_1$, $\gamma_2$).
 
-It is the current primary inference model.
+Rather than training five independent models, V2 explored a shared multi-output architecture.
 
-**Training configuration**
+### V3 — ResNet-18
 
-| Setting | Configuration |
+V3 uses a ResNet-18 architecture for multi-parameter inference.
+
+The model predicts the five selected physical parameters from a normalised grayscale observation.
+
+**Training configuration:**
+
+| Setting | Value |
 |---|---|
 | Architecture | ResNet-18 |
-| Input dimensions | 160 × 160 × 1 |
-| Output parameters | 5 |
 | Epochs | 40 |
 | Batch size | 32 |
 | Initial learning rate | 0.001 |
-| Uncertainty estimation | Monte Carlo dropout |
-| Monte Carlo passes | 30 |
+| Prediction targets | 5 |
+| Uncertainty passes | 30 |
 
-The model predicts the five physical parameters simultaneously.
-
-Target normalization is used during training and reversed during inference to obtain predictions in physical parameter units.
-
----
-
-## 5. Experimental Results
-
-### CNN₀ vs CNN₁ — Dataset V0
-
-Both models were evaluated using the same held-out test dataset.
-
-| Metric | CNN₀ | CNN₁ |
-|---|---:|---:|
-| Test MAE | 0.111396 arcsec | 0.019245 arcsec |
-| Test MSE | 0.01388 | 0.00057045 |
-
-CNN₁ achieved:
-
-- Approximately 82.7% reduction in test MAE.
-- Approximately 5.8 times lower test MAE than CNN₀.
-- Best validation MAE of 0.018489 arcseconds at epoch 9.
-- Early stopping after 14 epochs.
-
-These results demonstrate improved parameter estimation under the controlled synthetic V0 experiment. They should not be interpreted as equivalent accuracy on real astronomical observations.
-
-### V3 — Dataset V1 Multi-Parameter Results
-
-The following metrics were obtained on the held-out test dataset.
+**Held-out synthetic test results:**
 
 | Parameter | MAE | R² |
 |---|---:|---:|
-| Einstein radius ($\theta_E$) | 0.034362 | 0.983177 |
-| Ellipticity ($e_1$) | 0.036626 | 0.882142 |
-| Ellipticity ($e_2$) | 0.036234 | 0.877282 |
-| Shear ($\gamma_1$) | 0.016809 | 0.754748 |
-| Shear ($\gamma_2$) | 0.018192 | 0.689337 |
+| $\theta_E$ | 0.034362 | 0.983177 |
+| $e_1$ | 0.036626 | 0.882142 |
+| $e_2$ | 0.036234 | 0.877282 |
+| $\gamma_1$ | 0.016809 | 0.754748 |
+| $\gamma_2$ | 0.018192 | 0.689337 |
 
-The results indicate that the model performs strongly on Einstein-radius estimation within the synthetic validation domain.
+These metrics describe performance on the held-out synthetic test dataset. They should not be interpreted as measured accuracy on real astronomical observations.
 
-The lower R² values for the shear components also highlight differences in prediction difficulty across physical parameters.
+## Uncertainty Estimation
 
-These metrics describe performance on the generated synthetic dataset, not generalization to arbitrary real astronomical images.
+A point prediction alone does not communicate how uncertain a model is about its estimate.
 
----
+Olin uses Monte Carlo dropout to obtain multiple predictions for an input observation.
 
-## 6. Uncertainty Estimation
+The model is evaluated repeatedly with dropout active, producing a distribution of predictions rather than a single output.
 
-A point prediction alone does not communicate how variable a model's output is under repeated stochastic inference.
+The resulting variation is used to estimate predictive uncertainty.
 
-Olin incorporates Monte Carlo dropout to investigate predictive variability.
+The uncertainty estimates are calibrated using the synthetic validation data. Calibration is intended to improve the relationship between predicted uncertainty and observed prediction errors within the evaluated data distribution.
 
-### Monte Carlo Inference
+This calibration does not guarantee equivalent uncertainty coverage under distribution shift or on real astronomical observations.
 
-During inference, the model performs multiple forward passes with dropout enabled.
+## Physics-Based Reconstruction — FM2
 
-For each physical parameter, the resulting predictions are used to calculate:
-
-- Mean prediction
-- Predictive standard deviation
-
-The current implementation uses 30 Monte Carlo passes.
-
-### Uncertainty Calibration
-
-Calibration factors derived from synthetic validation data are applied to the estimated uncertainty.
-
-The calibration procedure uses a target coverage of approximately 68.27%, corresponding to the nominal one-standard-deviation interval for a Gaussian distribution.
-
-The resulting uncertainty estimates are useful for communicating model variability within the validated synthetic domain.
-
-**Scientific limitation:** The calibration is based on synthetic validation data. It has not established calibrated uncertainty for arbitrary real astronomical observations or distribution shifts.
-
-Uncertainty estimates should therefore be interpreted alongside the domain and limitations of the model.
-
----
-
-## 7. Physics-Based Reconstruction — FM2
-
-Parameter prediction alone does not provide a complete scientific evaluation of an inverse-inference model.
-
-FM2 uses inferred physical parameters to generate a reconstruction through the established forward model.
-
-### Reconstruction Pipeline
+The machine-learning model estimates physical parameters. FM2 then uses those estimates in a gravitational-lensing forward model to generate a corresponding reconstruction.
 
 ```text
-Original Observation
-       |
-       v
-  V3 Inference
-       |
-       v
-Predicted Parameters
-       |
-       v
-      FM2
-       |
-       v
-Physics-Based Reconstruction
-       |
-       v
-Reconstruction and Residual Analysis
+Observed astronomical image
+          ↓
+Image preprocessing
+          ↓
+     V3 ResNet-18
+          ↓
+ Five physical parameters
+          ↓
+ Uncertainty estimation
+          ↓
+          FM2
+          ↓
+ Physics-based reconstruction
+          ↓
+ Comparison with observation
+          ↓
+        Residual
 ```
 
-### Reconstruction Process
+The reconstruction is not an image-enhancement or denoising operation. It is generated using the inferred physical parameters and the forward-model assumptions.
 
-The reconstruction component:
+The residual provides a visual representation of the difference between the observation and the reconstructed image.
 
-1. Receives predicted physical parameters.
-2. Passes them into the gravitational-lensing model configuration.
-3. Renders a deterministic image using the forward model.
-4. Compares the reconstructed image against the input observation.
-5. Generates residual information for analysis.
+![Original observation, physics-based reconstruction, and residual](docs/images/reconstruction-comparison.png)
 
-The reconstruction does not introduce a separate neural image-generation model.
+A close reconstruction does not independently establish that the inferred parameters are uniquely correct. Different parameter combinations may produce similar image structures, and the result remains conditional on the assumptions of the forward model.
 
-### Residual Analysis
+## Exploratory Real-Observation Testing
 
-The image residual is defined as:
+Olin's inference pipeline was also tested using the real gravitational-lens observation **HE0435-1223**, obtained from the CASTLES dataset.
 
-$$
-R(x,y)=I_{\mathrm{observed}}(x,y)-I_{\mathrm{reconstructed}}(x,y)
-$$
+This experiment was used to examine whether the preprocessing and inference workflow could be applied to an observational image.
 
-Residual analysis helps investigate differences between the observed image and the reconstruction.
+The reconstruction did not provide sufficient qualitative agreement to establish reliable real-observation performance.
 
-A small residual alone does not establish that the inferred physical parameters are correct. Different parameter configurations may potentially produce similar observations.
+This is therefore treated as exploratory pipeline testing, not scientific validation or evidence of generalisation to real astronomical systems.
 
-Reconstruction analysis must therefore be considered alongside parameter-estimation error and the limitations of the forward model.
+Further observational evaluation is required before making claims about real-data inference accuracy.
 
-### Current Reconstruction Pipeline
+## Web Application
 
-The inference pipeline integrates:
+Olin V1 includes an integrated web application that exposes the scientific inference pipeline through an authenticated workflow.
 
-- Image preprocessing
-- V3 model prediction
-- Uncertainty estimation
-- Physics-based reconstruction
-- Residual generation
-- Numerical result generation
-- Scientific report generation
-
-Synthetic `.npy` observations are used for controlled quantitative validation. Ordinary image inputs are handled as exploratory observational inputs.
-
----
-
-## 8. Exploratory Real-Observation Evaluation
-
-Olin has been tested using a real astronomical gravitational-lensing observation.
-
-### CASTLES — HE0435-1223
-
-The exploratory evaluation used observational material associated with the HE0435-1223 gravitational lens system from the CASTLES collection.
-
-The experiment investigated whether the existing inference pipeline could process a real astronomical image and produce:
-
-- Physical parameter predictions
-- Uncertainty estimates
-- A physics-based reconstruction
-- Residual information
-- A scientific PDF report
-
-This experiment demonstrated that the software pipeline can process an external image, but the resulting reconstruction was not sufficiently convincing to establish reliable physical inference.
-
-### Scientific Limitations
-
-Real astronomical images can differ substantially from the synthetic training observations in:
-
-- Instrument response
-- Pixel scale
-- PSF characteristics
-- Noise distribution
-- Image calibration
-- Source and lens morphology
-- Background and foreground contamination
-
-The current model was trained and calibrated using controlled synthetic observations.
-
-Consequently, real-image predictions are exploratory and must not be interpreted as scientifically validated measurements.
-
-The experiment highlights the importance of domain compatibility and real-observation validation before claiming generalization.
-
----
-
-## 9. Inference and Scientific Reporting Pipeline
-
-Olin provides an inference pipeline that connects image preprocessing, parameter prediction, reconstruction and report generation.
-
-### Supported Image Inputs
-
-The user-facing image pipeline supports:
-
-- PNG
-- JPEG
-- WebP
-
-Synthetic `.npy` inputs are reserved for internal controlled validation rather than ordinary image uploads.
-
-### Pipeline Workflow
+### Application workflow
 
 ```text
-Input Image
-   |
-   v
-Image Validation
-   |
-   v
-Image Preprocessing
-   |
-   v
-160 × 160 Model Input
-   |
-   v
-V3 Model Inference
-   |
-   v
-Physical Parameter Predictions
-   |
-   v
-Uncertainty Estimation
-   |
-   v
-FM2 Reconstruction
-   |
-   v
-Residual Analysis
-   |
-   v
-Scientific Results
-   |
-   v
-PDF Report Generation
+User authentication
+        ↓
+Dashboard
+        ↓
+Upload astronomical image
+        ↓
+Image preprocessing
+        ↓
+V3 inference
+        ↓
+Parameter predictions
+        ↓
+Uncertainty estimation
+        ↓
+FM2 reconstruction
+        ↓
+Residual generation
+        ↓
+Scientific PDF report
 ```
 
-### Scientific PDF Report
+### Frontend
 
-The reporting component generates a PDF containing relevant analysis outputs, including:
+The frontend uses:
 
-- Input image
-- Reconstructed image
-- Residual image
-- Predicted physical parameters
-- Uncertainty information
-- Reconstruction metrics
-- Relevant inference and reconstruction details
-- Limitations and reproducibility information
+- HTML.
+- CSS.
+- Vanilla JavaScript.
 
-The application stores generated reports separately from database metadata and exposes them through authenticated, ownership-checked retrieval.
+The application includes:
 
----
+- Landing page.
+- Registration and login.
+- Google OAuth authentication.
+- Email verification and OTP workflow.
+- Password recovery and reset.
+- Dashboard.
+- New analysis and image upload.
+- Analysis history.
+- Individual analysis results.
+- Prediction and uncertainty visualisation.
+- Reconstruction and residual viewing.
+- Report access.
 
-## 10. Application Architecture — Olin Web Application
+### Backend
 
-The scientific inference pipeline is integrated into a FastAPI application.
+The backend uses FastAPI and PostgreSQL.
 
-The backend separates user-facing application functionality from the scientific inference implementation.
+Implemented capabilities include:
 
-### Current Backend Architecture
+- User authentication and authorisation.
+- Access and refresh token workflows.
+- Protected analysis endpoints.
+- Analysis ownership checks.
+- Image upload and processing.
+- Analysis metadata persistence.
+- PDF report generation and retrieval.
+- Rate limiting on protected operations.
 
-```text
-                  User
-                   |
-                   v
-          Future Web Frontend
-                   |
-                   v
-                FastAPI
-                   |
-          +--------+--------+
-          |                 |
-          v                 v
-    Authentication     Analysis API
-          |                 |
-          v                 v
-      PostgreSQL      Inference Pipeline
-                            |
-                      +-----+-----+
-                      |           |
-                      v           v
-                   V3 Model      FM2
-                      |           |
-                      +-----+-----+
-                            |
-                            v
-                   Scientific Report
-                            |
-                            v
-                    Private Storage
-                            |
-                            v
-                  Protected Retrieval
-```
+### API Overview
 
-The backend is implemented. The user-facing frontend is still pending.
-
-### Application Technologies
-
-| Component | Technology |
-|---|---|
-| Backend API | FastAPI |
-| Database | PostgreSQL |
-| Frontend (planned) | HTML, CSS, JavaScript |
-| Scientific inference | TensorFlow / Keras |
-| Image processing | Pillow, NumPy |
-| Gravitational-lens modelling | lenstronomy |
-| PDF generation | ReportLab |
-| Authentication | JWT-based authentication, Google OAuth |
-| Version control | Git / GitHub |
-
-### Authentication and Security
-
-The backend implements:
-
-- User registration
-- Email verification
-- Email and password authentication
-- Google OAuth integration
-- Password-reset workflow
-- Access and refresh token handling
-- Protected API endpoints
-- Rate limiting for selected operations
-- Ownership-based access control for analyses and reports
-
-Authentication and ownership checks are handled separately from the scientific inference implementation.
-
-### Analysis Management
-
-Authenticated users can:
-
-- Submit an image for analysis.
-- Retrieve their analyses.
-- List their analyses.
-- Generate a PDF report for a completed analysis.
-- List their generated reports.
-- Download their reports.
-
-The backend associates analysis and report records with their respective users and checks ownership when retrieving protected resources.
-
-### Implemented API Endpoints
+The application exposes the following principal analysis and reporting endpoints:
 
 | Method | Endpoint | Purpose |
 |---|---|---|
-| POST | `/analyses` | Upload an image and create an analysis |
-| GET | `/analyses` | List the authenticated user's analyses |
-| GET | `/analyses/{analysis_id}` | Retrieve a particular analysis |
-| POST | `/analyses/{analysis_id}/report` | Generate a report for an analysis |
-| GET | `/reports` | List the authenticated user's reports |
-| GET | `/reports/{report_id}/download` | Download a report PDF |
+| POST | `/analyses` | Create an analysis |
+| GET | `/analyses` | Retrieve the authenticated user's analyses |
+| GET | `/analyses/{analysis_id}` | Retrieve an individual analysis |
+| POST | `/analyses/{analysis_id}/report` | Generate an analysis report |
+| GET | `/reports` | Retrieve available reports |
+| GET | `/reports/{report_id}/download` | Download a report |
 
-Protected endpoints require authentication.
+Access to user-specific resources is protected by authentication and ownership checks.
 
-The API also exposes its OpenAPI documentation through FastAPI's documentation interface during development.
+## Technologies
 
-### Architectural Principles
+| Area | Technologies |
+|---|---|
+| Scientific computing | Python, NumPy |
+| Gravitational lens modelling | `lenstronomy` |
+| Machine learning | TensorFlow, Keras |
+| Computer vision | ResNet-18 |
+| Image processing | Pillow |
+| Backend | FastAPI |
+| Database | PostgreSQL |
+| Frontend | HTML, CSS, JavaScript |
+| 3D galaxy visualisation | Three.js |
+| Scientific reporting | PDF generation |
+| Version control | Git, GitHub |
 
-- Keep the inference pipeline independent of authentication and application logic.
-- Load trained model artifacts for inference rather than training during user requests.
-- Use PostgreSQL for persistent application metadata.
-- Store generated report files separately from database metadata.
-- Enforce ownership checks for analysis and report retrieval.
-- Apply rate limits to selected sensitive operations.
-- Keep the initial backend architecture simple and avoid unnecessary distributed infrastructure.
+## Repository Structure
 
----
-
-## 11. Repository Structure
-
-The repository is organized around the scientific pipeline, experimental outputs, documentation and application implementation.
+The following is a simplified overview of the project:
 
 ```text
 Olin/
 │
-├── simulation/
-│
-├── FM1/
-│
-├── FM2/
-│
-├── datasets/
-│
-├── training/
-│   ├── models/
-│   └── results/
-│
-├── inference/
-│   └── results/
-│
-├── real_data/
-│
 ├── docs/
+│   └── images/
+│       ├── olin-galaxy.gif
+│       └── reconstruction-comparison.png
 │
-├── Documents and updations/
+├── frontend/
+│   ├── css/
+│   ├── js/
+│   ├── pages/
+│   ├── index.html
+│   └── galaxy-only.html
 │
 ├── olin_app/
-│   ├── auth.py
-│   ├── database.py
-│   ├── email_service.py
 │   ├── main.py
-│   ├── rate_limit.py
-│   ├── schemas.py
-│   ├── security.py
-│   ├── database/
-│   │   └── schema.sql
-│   └── tests/
+│   └── database.py
 │
-├── private_storage/
+├── inference/
+│   ├── config.py
+│   ├── preprocessing.py
+│   ├── model_loader.py
+│   ├── predictor.py
+│   └── ...
+│
+├── FM1/
+├── FM2/
+├── simulation/
+├── training/
+├── datasets/                 # Generated locally; not tracked
+│
+├── Documents and updations/
+│   ├── Olin_scientific_sw_report.pdf
+│   └── Experiment Reports/
 │
 ├── README.md
 └── .gitignore
 ```
 
-The structure above represents the major project components; individual local directories and generated artifacts may vary.
+Some generated datasets, trained model weights, and intermediate artifacts are intentionally excluded from version control.
 
-### Component Responsibilities
+## Scientific Design Principles
 
-**Simulation**
+Olin follows several principles throughout its development:
 
-Contains exploratory physical implementations developed to understand gravitational-lensing physics.
+1. **Physics before ML** — establish the physical forward process before training the inverse model.
+2. **Controlled experiments** — introduce physical variation progressively so that model behaviour can be interpreted.
+3. **Known ground truth** — use synthetic observations with known parameters for quantitative evaluation.
+4. **Physics-based reconstruction** — examine predicted parameters by passing them through a forward model.
+5. **Uncertainty awareness** — communicate uncertainty rather than presenting predictions as exact physical measurements.
+6. **Scientific limitations** — distinguish synthetic evaluation from real-observation validation.
+7. **Depth over feature count** — prioritise the scientific inference pipeline over unrelated application features.
+8. **Established physics** — use established gravitational-lensing theory rather than claiming novel cosmological physics.
 
-**FM1**
+## Limitations
 
-Generates synthetic observations from known lens and source parameters.
+Olin V1 is a constrained research and scientific software project. Its results should be interpreted within the following limitations:
 
-**FM2**
+- The inference model is trained on synthetic observations generated from a defined forward model.
+- The predicted parameters describe the selected lens parameterisation, not an unrestricted recovery of the complete mass distribution.
+- Synthetic test metrics do not establish real-observation accuracy.
+- Uncertainty calibration on synthetic validation data may not remain reliable under distribution shift.
+- Parameter degeneracies can produce similar reconstructed observations.
+- The observation model does not reproduce every effect present in real telescope data.
+- The exploratory HE0435-1223 test does not constitute scientific validation on real observations.
+- Datasets and trained model artifacts are not included in the Git repository. They must be provisioned separately to execute the corresponding inference and training workflows.
 
-Provides deterministic physics-based reconstruction using inferred physical parameters.
+## Future Directions
 
-**Datasets**
+Future work will focus on scientific validation and reliability rather than simply increasing application complexity.
 
-Contains locally generated synthetic observations, labels and prepared arrays.
+Potential directions include:
 
-**Training**
+- Broader real-observation evaluation.
+- Improved handling of observational effects.
+- Further parameter-degeneracy experiments.
+- Out-of-distribution testing.
+- Improved uncertainty evaluation under distribution shift.
+- Additional physical variation in synthetic datasets.
+- Deployment and operational hardening of the web application.
 
-Contains model training, dataset preparation and evaluation artifacts.
+## Documentation
 
-**Inference**
+The project includes additional scientific and development documentation:
 
-Contains the production inference, preprocessing, prediction, reconstruction and scientific reporting pipeline.
+- `Documents and updations/Olin_scientific_sw_report.pdf` — scientific software requirements and design.
+- `Documents and updations/Experiment Reports/Experiment_1_CNN0_vs_CNN1.pdf` — initial CNN experiment report.
+- `docs/dataset_v0_validation.md` — Dataset V0 validation documentation.
 
-**Real Data**
+## References
 
-Contains exploratory external observational material used for testing. Such material is not automatically included in version control.
+### Gravitational-lensing modelling
 
-**Docs and Documents and updations**
-
-Contain scientific software documentation, experiment reports and project documentation.
-
-**Olin App**
-
-Contains the application backend, authentication, database integration, API endpoints and automated tests.
-
-**Private Storage**
-
-Contains application-generated files that should remain outside public version control.
-
-Generated datasets, model weights, temporary prediction files, private reports and other large or sensitive derived artifacts are excluded from version control where appropriate.
-
----
-
-## 12. Scientific Design Principles and Limitations
-
-Olin follows several principles throughout development.
-
-1. **Physics before machine learning**
-
-   The physical forward process is established before training an inverse model.
-
-2. **Controlled experiments**
-
-   Initial datasets provide known conditions for evaluating model behaviour.
-
-3. **Known ground truth**
-
-   Synthetic observations provide physical parameters for quantitative evaluation.
-
-4. **Physics-based reconstruction**
-
-   Inferred parameters are passed through an established forward model to investigate the resulting image.
-
-5. **Progressive complexity**
-
-   Additional physical variations and parameter degeneracies are introduced progressively.
-
-6. **Uncertainty awareness**
-
-   Predictions are accompanied by uncertainty estimates, with calibration limitations explicitly acknowledged.
-
-7. **Separation of simulation and inference**
-
-   FM1, training, inference and FM2 have distinct responsibilities.
-
-8. **Scientific honesty**
-
-   Synthetic performance and exploratory real-image results are reported separately.
-
-9. **Depth over feature count**
-
-   The project prioritizes scientific understanding and validation rather than unrelated application features.
-
-### Current Limitations
-
-- The synthetic observation model does not reproduce every property of real astronomical instruments.
-- The model's quantitative performance is established primarily within its synthetic training domain.
-- Real-observation inference has not yet been validated across a representative collection of systems.
-- Uncertainty calibration is based on synthetic validation data.
-- Reconstruction similarity alone cannot establish physical correctness.
-- Parameter degeneracies and out-of-distribution behaviour require further investigation.
-- The web frontend has not yet been integrated.
-- Additional authorization, security and deployment testing remains necessary.
-
----
-
-## 13. Future Directions
-
-### Scientific Evaluation
-
-- Expand validation using real astronomical observations.
-- Investigate observational data compatibility.
-- Study parameter degeneracies.
-- Evaluate behaviour under distribution shifts.
-- Investigate the limitations of the current forward model.
-
-### Possible V2 — Real-Observation Evaluation
-
-A possible future extension is to investigate the Gaia Focused Product Release gravitational-lens search catalogue.
-
-The catalogue may provide a starting point for identifying candidate systems and locating corresponding observational data.
-
-This would require obtaining suitable image observations and checking their compatibility with Olin's physical forward model.
-
-The Gaia catalogue is not currently a direct training dataset for Olin's image-based inference model.
-
-### Application Development
-
-- Develop and integrate the user-facing frontend.
-- Complete frontend-to-backend workflow integration.
-- Expand automated integration and authorization testing.
-- Improve operational error handling and deployment configuration.
-- Validate the complete application workflow.
-- Prepare the application for deployment.
-
-Future development will prioritize scientific validity, reproducibility and reliable software integration rather than simply increasing model complexity or application features.
-
----
-
-## 14. Documentation
-
-The project's scientific software requirements, architecture and development considerations are documented in:
-
-[Olin Scientific Software Report](Documents%20and%20updations/Olin_scientific_sw_report.pdf)
-
-The CNN experiment report:
-
-[Experiment 1 — CNN₀ vs CNN₁](Documents%20and%20updations/Experiment%20Reports/Experiment_1_CNN0_vs_CNN1.pdf)
-
-The Dataset V0 reconstruction-validation report:
-
-[Dataset V0 — Reconstruction Validation](docs/dataset_v0_validation.md)
-
----
-
-## 15. References
-
-### Gravitational-Lensing Modelling
-
-Birrer, S., & Amara, A. (2018). *lenstronomy: Multi-purpose gravitational lens modelling software package*. Physics of the Dark Universe, 22, 189–201.
-
-DOI: https://doi.org/10.1016/j.dark.2018.11.002
+1. Birrer, S., & Amara, A. (2018). *lenstronomy: Multi-purpose gravitational lens modelling software package*. **Physics of the Dark Universe, 22**, 189–201. https://doi.org/10.1016/j.dark.2018.11.002
+2. Birrer, S., et al. (2021). *lenstronomy II: A gravitational lensing software ecosystem*. **Journal of Open Source Software**.
+3. Birrer, S. (2024). *Strong gravitational lensing's 'external shear' is not shear*. **Monthly Notices of the Royal Astronomical Society**.
 
 ### Software
 
-[lenstronomy](https://github.com/lenstronomy/lenstronomy) — Open-source Python software for gravitational-lens modelling and forward simulations.
+- [lenstronomy](https://github.com/lenstronomy/lenstronomy) — open-source Python software for gravitational-lens modelling.
+- [Three.js](https://threejs.org/) — JavaScript 3D graphics library.
 
 ---
 
-**Olin — Connecting gravitational-lensing physics with machine-learning inverse inference.**
+**Olin — Gravitational Lensing Inverse Inference**
+
+A physics-grounded machine-learning application for exploring the relationship between gravitationally lensed observations and the physical parameters behind them.
