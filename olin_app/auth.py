@@ -57,7 +57,7 @@ def verify_google_id_token(token : str , nonce: str) -> dict:
             google_requests.Request(),
             audience = client_id,
         )
-    except ValueError:
+    except ValueError as error:
         raise ValueError("Invalid Google ID token.") from None
 
     #Require a verified gmail
@@ -561,6 +561,75 @@ def request_password_reset(email: str):
         raise RuntimeError(
             "Unable to send password reset email. Please try again later."
         ) from None
+
+
+def verify_password_reset_otp(email: str, otp: str) -> bool:
+
+    email = normalize_email(email)
+
+    with get_db_cursor() as cursor:
+
+        cursor.execute(
+            """
+            SELECT id
+            FROM users
+            WHERE email = %s
+              AND email_verified = TRUE;
+            """,
+            (email,),
+        )
+
+        user = cursor.fetchone()
+
+        if user is None:
+            raise ValueError("Invalid or expired OTP.")
+
+        user_id = user[0]
+
+        cursor.execute(
+            """
+            SELECT id, otp_hash, attempts
+            FROM otp_codes
+            WHERE user_id = %s
+              AND purpose = 'password_reset'
+              AND consumed_at IS NULL
+              AND expires_at > CURRENT_TIMESTAMP
+            ORDER BY created_at DESC
+            LIMIT 1
+            FOR UPDATE;
+            """,
+            (user_id,),
+        )
+
+        record = cursor.fetchone()
+
+        if record is None:
+            raise ValueError("Invalid or expired OTP.")
+
+        otp_id, stored_hash, attempts = record
+
+        if attempts >= 5:
+            raise ValueError("Maximum OTP attempts exceeded.")
+
+        if not verify_otp_hash(otp, stored_hash):
+
+            cursor.execute(
+                """
+                UPDATE otp_codes
+                SET attempts = attempts + 1
+                WHERE id = %s;
+                """,
+                (otp_id,),
+            )
+
+            return False
+
+        # OTP is valid.
+        # Do not consume it here.
+        # The final password-reset operation will consume it.
+
+        return True
+    
 
 # Reset password
 

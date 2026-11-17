@@ -1,0 +1,219 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis History | Olin</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/history.css">
+</head>
+
+<body>
+
+    <div class="dashboard-layout">
+
+        <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+        <aside class="sidebar" id="sidebar">
+
+            <a href="./dashboard.html" class="brand">ol<span>in</span></a>
+
+            <div class="sidebar-section">
+                <p class="sidebar-label">WORKSPACE</p>
+
+                <nav class="sidebar-navigation">
+                    <a href="./dashboard.html" class="nav-link">
+                        <span class="nav-icon">⌂</span>
+                        Dashboard
+                    </a>
+
+                    <a href="./new-analysis.html" class="nav-link">
+                        <span class="nav-icon">＋</span>
+                        New Analysis
+                    </a>
+
+                    <a href="./history.html" class="nav-link active">
+                        <span class="nav-icon">⌕</span>
+                        Analysis History
+                    </a>
+
+                    <a href="./reports.html" class="nav-link">
+                        <span class="nav-icon">▤</span>
+                        Reports
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-bottom">
+                <button class="account-trigger" id="account-trigger" type="button">
+                    <span class="avatar" id="sidebar-avatar">O</span>
+
+                    <span class="account-trigger-details">
+                        <span class="account-trigger-name" id="sidebar-name">Account</span>
+                        <span class="account-trigger-label">Account settings</span>
+                    </span>
+
+                    <span class="account-chevron">›</span>
+                </button>
+            </div>
+
+        </aside>
+
+        <main class="main-content">
+
+            <header class="topbar">
+                <button class="mobile-menu-button" id="mobile-menu-button" type="button" aria-label="Open navigation">
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <span class="topbar-label">SCIENTIFIC WORKSPACE</span>
+
+                <button class="topbar-avatar" id="topbar-avatar" type="button" aria-label="Open account">O</button>
+            </header>
+
+            <div class="dashboard-content history-content">
+
+                <section class="history-heading">
+
+                    <div>
+                        <p class="eyebrow">WORKSPACE / ANALYSIS HISTORY</p>
+
+                        <h1>Analysis history<span class="heading-period">.</span></h1>
+
+                        <p class="welcome-description">
+                            A record of your gravitational lens inference experiments.
+                        </p>
+                    </div>
+
+                    <a href="./new-analysis.html" class="history-new-button">
+                        <span>＋</span>
+                        New analysis
+                    </a>
+
+                </section>
+
+                <section class="history-section">
+
+                    <div class="history-section-heading">
+                        <div>
+                            <p class="section-eyebrow">RESEARCH RECORD</p>
+                            <h2>Previous analyses</h2>
+                        </div>
+
+                        <span class="history-count" id="history-count">— RECORDS</span>
+                    </div>
+
+                    <div class="history-panel">
+
+                        <div class="history-table-header">
+                            <span>ANALYSIS</span>
+                            <span>MODEL VERSION</span>
+                            <span>STATUS</span>
+                            <span>DATE CREATED</span>
+                            <span></span>
+                        </div>
+
+                        <div id="history-loading" class="history-message">
+                            Loading your analyses...
+                        </div>
+
+                        <div id="history-error" class="history-message history-error" hidden></div>
+
+                        <div id="history-empty" class="history-empty" hidden>
+                            <span class="history-empty-symbol">⌕</span>
+                            <h3>No analyses yet</h3>
+                            <p>Your completed gravitational lens analyses will appear here.</p>
+                            <a href="./new-analysis.html">Start your first analysis →</a>
+                        </div>
+
+                        <div id="history-table-container" hidden>
+                            <div id="history-table-body"></div>
+                        </div>
+
+                    </div>
+
+                    <div class="history-pagination" id="history-pagination" hidden>
+                        <button type="button" id="previous-page" disabled>
+                            ← Previous
+                        </button>
+
+                        <span id="page-indicator">Page 1</span>
+
+                        <button type="button" id="next-page">
+                            Next →
+                        </button>
+                    </div>
+
+                </section>
+
+                <footer class="dashboard-footer">
+                    <span>olin.</span>
+                    <span>GRAVITATIONAL LENSING INFERENCE</span>
+                </footer>
+
+            </div>
+        </main>
+    </div>
+
+    <div class="drawer-backdrop" id="drawer-backdrop"></div>
+
+    <aside class="account-drawer" id="account-drawer">
+
+        <div class="drawer-header">
+            <h2>Account</h2>
+            <button class="drawer-close" id="drawer-close" type="button" aria-label="Close account panel">×</button>
+        </div>
+
+        <div class="drawer-profile">
+            <div class="drawer-avatar" id="drawer-avatar">O</div>
+
+            <div class="drawer-profile-details">
+                <h3 id="drawer-name">Account</h3>
+                <p id="drawer-email">—</p>
+            </div>
+        </div>
+
+        <div class="drawer-divider"></div>
+
+        <div class="drawer-actions">
+
+            <a href="./forgot-password.html" class="drawer-action">
+                <span class="drawer-action-icon">⌑</span>
+
+                <span class="drawer-action-text">
+                    <strong>Reset password</strong>
+                    <small>Update your account password</small>
+                </span>
+
+                <span class="drawer-action-arrow">→</span>
+            </a>
+
+            <button class="drawer-action logout-action" id="logout-button" type="button">
+                <span class="drawer-action-icon">↗</span>
+
+                <span class="drawer-action-text">
+                    <strong>Log out</strong>
+                    <small>Sign out of your Olin account</small>
+                </span>
+
+                <span class="drawer-action-arrow">→</span>
+            </button>
+
+        </div>
+
+        <div class="drawer-footer">OLIN SCIENTIFIC WORKSPACE</div>
+
+    </aside>
+
+    <script src="../js/history.js"></script>
+
+</body>
+</html>

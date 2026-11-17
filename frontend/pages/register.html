@@ -1,0 +1,255 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Register — Olin</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=Newsreader:opsz,wght@6..72,300;6..72,400&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../css/auth.css">
+</head>
+
+<body>
+
+    <canvas id="background-dots"></canvas>
+
+    <header class="navbar">
+
+        <a href="../index.html" class="logo">Olin</a>
+
+        <nav>
+            <a href="../index.html" class="back-link">
+                Back to home
+            </a>
+        </nav>
+
+    </header>
+
+    <main class="login-container">
+
+        <section class="login-intro">
+
+            <h1>Begin exploring the invisible universe.</h1>
+
+            <p class="intro-description">
+                Create an Olin account to investigate gravitational
+                lensing, infer mass distributions and explore
+                scientific reconstructions.
+            </p>
+
+            <p class="intro-description">
+                Your workspace keeps your analyses and generated
+                reports associated with your account.
+            </p>
+
+        </section>
+
+        <section class="login-form">
+
+            <div class="login-panel register-panel">
+
+                <h2>Create your account</h2>
+
+                <p class="subtitle">
+                    Get started with Olin.
+                </p>
+
+                <form id="register-form">
+
+                    <div class="form-group">
+
+                        <label for="name">Full name</label>
+
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            placeholder="Enter your name"
+                            maxlength="150"
+                            autocomplete="name"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="email">Email address</label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Enter your email"
+                            maxlength="255"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="password">Password</label>
+
+                        <div class="password-wrapper">
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Create a password"
+                                minlength="8"
+                                maxlength="128"
+                                autocomplete="new-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-password-toggle="password"
+                                aria-label="Show password"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.7"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+
+                        </div>
+
+                        <ul class="password-requirements">
+
+                            <li data-rule="min">
+                                <span class="requirement-icon">○</span>
+                                <span>At least 8 characters</span>
+                            </li>
+
+                            <li data-rule="max">
+                                <span class="requirement-icon">○</span>
+                                <span>At most 128 characters</span>
+                            </li>
+
+                            <li data-rule="upper">
+                                <span class="requirement-icon">○</span>
+                                <span>One uppercase letter</span>
+                            </li>
+
+                            <li data-rule="number">
+                                <span class="requirement-icon">○</span>
+                                <span>One number</span>
+                            </li>
+
+                            <li data-rule="special">
+                                <span class="requirement-icon">○</span>
+                                <span>One special character</span>
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="confirm-password">
+                            Confirm password
+                        </label>
+
+                        <div class="password-wrapper">
+
+                            <input
+                                type="password"
+                                id="confirm-password"
+                                name="confirm-password"
+                                placeholder="Enter your password again"
+                                autocomplete="new-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-password-toggle="confirm-password"
+                                aria-label="Show password"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.7"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+
+                        </div>
+
+                        <p
+                            class="form-message"
+                            id="confirm-error"
+                            role="alert"
+                        ></p>
+
+                    </div>
+
+                    <p
+                        class="form-message"
+                        id="register-message"
+                        role="alert"
+                    ></p>
+
+                    <button type="submit" id="register-button">
+                        Create account
+                    </button>
+
+                </form>
+
+                <div class="form-divider">
+                    <span></span>
+                    <p>OR</p>
+                    <span></span>
+                </div>
+
+                <button
+                    type="button"
+                    class="google-button"
+                    id="google-signup-button"
+                >
+                    <span class="google-icon" aria-hidden="true">G</span>
+                    Continue with Google
+                </button>
+
+                <p class="register-prompt">
+                    Already have an account?
+                    <a href="./login.html">Sign in</a>
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="../js/background.js"></script>
+    <script src="../js/register.js"></script>
+
+</body>
+</html>

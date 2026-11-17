@@ -1,0 +1,241 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results | Olin</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/analysis.css">
+</head>
+
+<body>
+
+    <div class="dashboard-layout">
+
+        <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+        <aside class="sidebar" id="sidebar">
+
+            <a href="./dashboard.html" class="brand">ol<span>in</span></a>
+
+            <div class="sidebar-section">
+                <p class="sidebar-label">WORKSPACE</p>
+
+                <nav class="sidebar-navigation">
+                    <a href="./dashboard.html" class="nav-link">
+                        <span class="nav-icon">⌂</span>
+                        Dashboard
+                    </a>
+
+                    <a href="./new-analysis.html" class="nav-link">
+                        <span class="nav-icon">＋</span>
+                        New Analysis
+                    </a>
+
+                    <a href="./history.html" class="nav-link active">
+                        <span class="nav-icon">⌕</span>
+                        Analysis History
+                    </a>
+
+                    <a href="./reports.html" class="nav-link">
+                        <span class="nav-icon">▤</span>
+                        Reports
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-bottom">
+                <button class="account-trigger" id="account-trigger" type="button">
+                    <span class="avatar" id="sidebar-avatar">O</span>
+
+                    <span class="account-trigger-details">
+                        <span class="account-trigger-name" id="sidebar-name">Account</span>
+                        <span class="account-trigger-label">Account settings</span>
+                    </span>
+
+                    <span class="account-chevron">›</span>
+                </button>
+            </div>
+
+        </aside>
+
+        <main class="main-content">
+
+            <header class="topbar">
+                <button class="mobile-menu-button" id="mobile-menu-button" type="button" aria-label="Open navigation">
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <span class="topbar-label">SCIENTIFIC ANALYSIS</span>
+
+                <button class="topbar-avatar" id="topbar-avatar" type="button" aria-label="Open account">O</button>
+            </header>
+
+            <div class="dashboard-content analysis-content">
+
+                <section class="analysis-heading">
+                    <div>
+                        <p class="eyebrow">ANALYSIS / RESULTS</p>
+                        <h1>Analysis results<span class="heading-period">.</span></h1>
+                        <p class="welcome-description">
+                            Inferred gravitational lens parameters and their estimated uncertainty.
+                        </p>
+                    </div>
+
+                    <a href="./history.html" class="back-link">← Analysis history</a>
+                </section>
+
+                <div id="page-loading" class="page-message">
+                    Loading analysis details...
+                </div>
+
+                <div id="page-error" class="page-message error-state" hidden></div>
+
+                <div id="analysis-results" hidden>
+
+                    <section class="analysis-meta-panel">
+                        <div>
+                            <p class="section-eyebrow">ANALYSIS IDENTIFIER</p>
+                            <p class="meta-value" id="analysis-id">—</p>
+                        </div>
+
+                        <div>
+                            <p class="section-eyebrow">STATUS</p>
+                            <span class="status" id="analysis-status">—</span>
+                        </div>
+
+                        <div>
+                            <p class="section-eyebrow">CREATED</p>
+                            <p class="meta-value" id="analysis-date">—</p>
+                        </div>
+
+                        <div>
+                            <p class="section-eyebrow">MODEL VERSION</p>
+                            <p class="meta-value" id="model-version">—</p>
+                        </div>
+                    </section>
+
+                    <section class="results-section">
+                        <div class="section-heading">
+                            <div>
+                                <p class="section-eyebrow">MODEL OUTPUT</p>
+                                <h2>Inferred parameters</h2>
+                            </div>
+                        </div>
+
+                        <div class="parameter-panel">
+                            <div class="parameter-header">
+                                <span>PARAMETER</span>
+                                <span>PREDICTION</span>
+                                <span>CALIBRATED UNCERTAINTY</span>
+                            </div>
+
+                            <div id="parameter-rows">
+                                <div class="loading-state">Preparing parameter results...</div>
+                            </div>
+                        </div>
+
+                        <p class="section-note">
+                            Uncertainty values are reported as returned by the inference pipeline.
+                            They represent model-estimated uncertainty, not observational measurement error.
+                        </p>
+                    </section>
+
+                    <section class="report-section">
+                        <div>
+                            <p class="section-eyebrow">SCIENTIFIC DOCUMENTATION</p>
+                            <h2>Analysis report</h2>
+                            <p>
+                                Generate or download the PDF containing the input image,
+                                reconstructed image, residual and inference results.
+                            </p>
+                        </div>
+
+                        <button class="report-button" id="report-button" type="button">
+                            <span id="report-button-label">Generate PDF report</span>
+                            <span>↓</span>
+                        </button>
+                    </section>
+
+                    <div id="report-message" class="report-message" hidden></div>
+
+                </div>
+
+                <!-- Hidden compatibility targets for the existing analysis.js.
+                     These are not displayed on the results page. -->
+                <div hidden>
+                    <span id="reconstruction-status"></span>
+                    <div id="reconstruction-preview"></div>
+                    <span id="residual-status"></span>
+                    <div id="residual-preview"></div>
+                </div>
+
+                <footer class="dashboard-footer">
+                    <span>olin.</span>
+                    <span>GRAVITATIONAL LENSING INFERENCE</span>
+                </footer>
+
+            </div>
+        </main>
+    </div>
+
+    <div class="drawer-backdrop" id="drawer-backdrop"></div>
+
+    <aside class="account-drawer" id="account-drawer">
+
+        <div class="drawer-header">
+            <h2>Account</h2>
+            <button class="drawer-close" id="drawer-close" type="button" aria-label="Close account panel">×</button>
+        </div>
+
+        <div class="drawer-profile">
+            <div class="drawer-avatar" id="drawer-avatar">O</div>
+
+            <div class="drawer-profile-details">
+                <h3 id="drawer-name">Account</h3>
+                <p id="drawer-email">—</p>
+            </div>
+        </div>
+
+        <div class="drawer-divider"></div>
+
+        <div class="drawer-actions">
+            <a href="./forgot-password.html" class="drawer-action">
+                <span class="drawer-action-icon">⌑</span>
+
+                <span class="drawer-action-text">
+                    <strong>Reset password</strong>
+                    <small>Update your account password</small>
+                </span>
+
+                <span class="drawer-action-arrow">→</span>
+            </a>
+
+            <button class="drawer-action logout-action" id="logout-button" type="button">
+                <span class="drawer-action-icon">↗</span>
+
+                <span class="drawer-action-text">
+                    <strong>Log out</strong>
+                    <small>Sign out of your Olin account</small>
+                </span>
+
+                <span class="drawer-action-arrow">→</span>
+            </button>
+        </div>
+
+        <div class="drawer-footer">OLIN SCIENTIFIC WORKSPACE</div>
+
+    </aside>
+
+    <script src="../js/analysis.js"></script>
+
+</body>
+</html>

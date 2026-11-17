@@ -22,6 +22,16 @@ class ForgotPasswordRequest(BaseModel):
     email: str = Field(max_length=255)
 
 
+class VerifyResetOTPRequest(BaseModel):
+    email: str = Field(max_length=255)
+    otp: str = Field(
+        min_length=6,
+        max_length=6,
+        pattern=r"^\d{6}$",
+    )
+
+
+
 class ResetPasswordRequest(BaseModel):
     email: str = Field(max_length=255)
     otp: str = Field(

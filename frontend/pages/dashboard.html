@@ -1,0 +1,378 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#030303">
+
+    <title>Dashboard | Olin</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+
+<body>
+
+    <div class="dashboard-layout">
+
+        <!-- Sidebar -->
+
+        <aside class="sidebar" id="sidebar">
+
+            <a href="./dashboard.html" class="brand">
+                Olin<span>.</span>
+            </a>
+
+            <div class="sidebar-section">
+                <p class="sidebar-label">WORKSPACE</p>
+
+                <nav class="sidebar-navigation">
+
+                    <a href="./dashboard.html" class="nav-link active">
+                        <span class="nav-icon">⌂</span>
+                        <span>Dashboard</span>
+                    </a>
+
+                    <a href="./new-analysis.html" class="nav-link">
+                        <span class="nav-icon">＋</span>
+                        <span>New Analysis</span>
+                    </a>
+
+                    <a href="./history.html" class="nav-link">
+                        <span class="nav-icon">◷</span>
+                        <span>Analysis History</span>
+                    </a>
+
+                    <a href="./reports.html" class="nav-link">
+                        <span class="nav-icon">▤</span>
+                        <span>Reports</span>
+                    </a>
+
+                </nav>
+            </div>
+
+            <div class="sidebar-bottom">
+
+                <button class="account-trigger" id="account-trigger" type="button">
+
+                    <span class="avatar" id="sidebar-avatar">?</span>
+
+                    <span class="account-trigger-details">
+                        <span class="account-trigger-name" id="sidebar-name">
+                            Loading account
+                        </span>
+
+                        <span class="account-trigger-label">
+                            Account
+                        </span>
+                    </span>
+
+                    <span class="account-chevron">›</span>
+
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- Main content -->
+
+        <main class="main-content">
+
+            <header class="topbar">
+
+                <button
+                    class="mobile-menu-button"
+                    id="mobile-menu-button"
+                    type="button"
+                    aria-label="Open navigation"
+                >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <span class="topbar-label">SCIENTIFIC WORKSPACE</span>
+
+                <button
+                    class="topbar-avatar"
+                    id="topbar-avatar"
+                    type="button"
+                    aria-label="Open account"
+                >
+                    ?
+                </button>
+
+            </header>
+
+
+            <div class="dashboard-content">
+
+                <!-- Welcome -->
+
+                <section class="welcome-section">
+
+                    <p class="eyebrow">YOUR WORKSPACE</p>
+
+                    <h1>
+                        Welcome back<span class="heading-period">.</span>
+                    </h1>
+
+                    <p class="welcome-description" id="welcome-description">
+                        Your gravitational lensing research workspace.
+                    </p>
+
+                </section>
+
+
+                <!-- New analysis: first-time users only -->
+
+                <section
+                    class="new-analysis-section"
+                    id="new-analysis-section"
+                    hidden
+                >
+
+                    <div class="new-analysis-card">
+
+                        <div class="new-analysis-content">
+
+                            <p class="section-eyebrow">START SOMETHING NEW</p>
+
+                            <h2>Explore a gravitational lens.</h2>
+
+                            <p>
+                                Upload an astronomical image and let Olin
+                                investigate its lens parameters through
+                                scientific inference.
+                            </p>
+
+                            <a href="./new-analysis.html" class="primary-button">
+                                <span>Start new analysis</span>
+                                <span class="button-arrow">→</span>
+                            </a>
+
+                        </div>
+
+                        <div class="new-analysis-symbol" aria-hidden="true">
+                            <span class="orbit orbit-one"></span>
+                            <span class="orbit orbit-two"></span>
+                            <span class="orbit orbit-three"></span>
+                            <span class="orbit-center"></span>
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- Recent analyses -->
+
+                <section class="data-section">
+
+                    <div class="section-heading">
+
+                        <div>
+                            <p class="section-eyebrow">YOUR RESEARCH</p>
+                            <h2>Recent analyses</h2>
+                        </div>
+
+                        <a href="./history.html" class="text-link">
+                            View history <span>→</span>
+                        </a>
+
+                    </div>
+
+                    <div class="data-panel">
+
+                        <div class="panel-header analysis-header">
+                            <span>ANALYSIS</span>
+                            <span>MODEL</span>
+                            <span>STATUS</span>
+                            <span>DATE</span>
+                        </div>
+
+                        <div id="recent-analyses">
+
+                            <div class="loading-state">
+                                Loading your analyses...
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <p class="section-note" id="analysis-count"></p>
+
+                </section>
+
+
+                <!-- Recent reports -->
+
+                <section class="data-section reports-section">
+
+                    <div class="section-heading">
+
+                        <div>
+                            <p class="section-eyebrow">SCIENTIFIC RECORDS</p>
+                            <h2>Recent reports</h2>
+                        </div>
+
+                        <a href="./reports.html" class="text-link">
+                            View reports <span>→</span>
+                        </a>
+
+                    </div>
+
+                    <div class="data-panel">
+
+                        <div class="panel-header report-header">
+                            <span>REPORT</span>
+                            <span>ANALYSIS ID</span>
+                            <span>DATE</span>
+                            <span>ACTION</span>
+                        </div>
+
+                        <div id="recent-reports">
+
+                            <div class="loading-state">
+                                Loading your reports...
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- Footer -->
+
+                <footer class="dashboard-footer">
+
+                    <span>OLIN</span>
+
+                    <span>
+                        Gravitational Lensing Inference
+                    </span>
+
+                </footer>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <!-- Mobile sidebar backdrop -->
+
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+
+    <!-- Account drawer backdrop -->
+
+    <div class="drawer-backdrop" id="drawer-backdrop"></div>
+
+
+    <!-- Account drawer -->
+
+    <aside
+        class="account-drawer"
+        id="account-drawer"
+        aria-hidden="true"
+        aria-label="Account panel"
+    >
+
+        <div class="drawer-header">
+
+            <h2>Account</h2>
+
+            <button
+                class="drawer-close"
+                id="drawer-close"
+                type="button"
+                aria-label="Close account panel"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="drawer-profile">
+
+            <div class="drawer-avatar" id="drawer-avatar">?</div>
+
+            <div class="drawer-profile-details">
+
+                <h3 id="drawer-name">Loading...</h3>
+
+                <p id="drawer-email"></p>
+
+            </div>
+
+        </div>
+
+
+        <div class="drawer-divider"></div>
+
+
+        <div class="drawer-actions">
+
+            <a href="./forgot-password.html" class="drawer-action">
+
+                <span class="drawer-action-icon">⌑</span>
+
+                <span class="drawer-action-text">
+                    <strong>Reset password</strong>
+                    <small>Verify your email to reset your password</small>
+                </span>
+
+                <span class="drawer-action-arrow">→</span>
+
+            </a>
+
+
+            <button
+                class="drawer-action logout-action"
+                id="logout-button"
+                type="button"
+            >
+
+                <span class="drawer-action-icon">↗</span>
+
+                <span class="drawer-action-text">
+                    <strong>Logout</strong>
+                    <small>Sign out of your Olin account</small>
+                </span>
+
+                <span class="drawer-action-arrow">→</span>
+
+            </button>
+
+        </div>
+
+
+        <div class="drawer-footer">
+            OLIN · SCIENTIFIC WORKSPACE
+        </div>
+
+    </aside>
+
+
+    <script src="../js/dashboard.js"></script>
+
+</body>
+
+</html>

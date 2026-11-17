@@ -1,0 +1,533 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#030303">
+
+    <title>New Analysis | Olin</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/new-analysis.css">
+</head>
+
+<body>
+
+    <div class="dashboard-layout">
+
+        <!-- Sidebar -->
+
+        <aside class="sidebar" id="sidebar">
+
+            <a href="./dashboard.html" class="brand">
+                Olin<span>.</span>
+            </a>
+
+            <div class="sidebar-section">
+
+                <p class="sidebar-label">WORKSPACE</p>
+
+                <nav class="sidebar-navigation">
+
+                    <a href="./dashboard.html" class="nav-link">
+                        <span class="nav-icon">⌂</span>
+                        <span>Dashboard</span>
+                    </a>
+
+                    <a href="./new-analysis.html" class="nav-link active">
+                        <span class="nav-icon">＋</span>
+                        <span>New Analysis</span>
+                    </a>
+
+                    <a href="./history.html" class="nav-link">
+                        <span class="nav-icon">◷</span>
+                        <span>Analysis History</span>
+                    </a>
+
+                    <a href="./reports.html" class="nav-link">
+                        <span class="nav-icon">▤</span>
+                        <span>Reports</span>
+                    </a>
+
+                </nav>
+
+            </div>
+
+            <div class="sidebar-bottom">
+
+                <button
+                    class="account-trigger"
+                    id="account-trigger"
+                    type="button"
+                >
+
+                    <span class="avatar" id="sidebar-avatar">?</span>
+
+                    <span class="account-trigger-details">
+
+                        <span class="account-trigger-name" id="sidebar-name">
+                            Loading account
+                        </span>
+
+                        <span class="account-trigger-label">
+                            Account
+                        </span>
+
+                    </span>
+
+                    <span class="account-chevron">›</span>
+
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- Main content -->
+
+        <main class="main-content">
+
+            <header class="topbar">
+
+                <button
+                    class="mobile-menu-button"
+                    id="mobile-menu-button"
+                    type="button"
+                    aria-label="Open navigation"
+                >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <span class="topbar-label">SCIENTIFIC WORKSPACE</span>
+
+                <button
+                    class="topbar-avatar"
+                    id="topbar-avatar"
+                    type="button"
+                    aria-label="Open account"
+                >
+                    ?
+                </button>
+
+            </header>
+
+
+            <div class="dashboard-content analysis-content">
+
+                <!-- Page heading -->
+
+                <section class="analysis-intro">
+
+                    <p class="eyebrow">SCIENTIFIC INFERENCE</p>
+
+                    <h1>
+                        New analysis<span class="heading-period">.</span>
+                    </h1>
+
+                    <p class="analysis-description">
+                        Begin a new gravitational lensing inference by
+                        providing an astronomical image.
+                    </p>
+
+                </section>
+
+
+                <!-- Upload workspace -->
+
+                <section class="analysis-workspace">
+
+                    <div class="upload-column">
+
+                        <div class="upload-panel">
+
+                            <div class="upload-panel-heading">
+
+                                <div>
+                                    <p class="section-eyebrow">INPUT IMAGE</p>
+                                    <h2>Upload your image</h2>
+                                </div>
+
+                                <span class="input-number">01</span>
+
+                            </div>
+
+
+                            <!-- File input -->
+
+                            <input
+                                type="file"
+                                id="image-input"
+                                accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"
+                                hidden
+                            >
+
+
+                            <!-- Drop area -->
+
+                            <div
+                                class="upload-zone"
+                                id="upload-zone"
+                                role="button"
+                                tabindex="0"
+                                aria-label="Choose an astronomical image"
+                            >
+
+                                <div class="upload-symbol" aria-hidden="true">
+                                    <span>↑</span>
+                                </div>
+
+                                <h3>Drop your image here</h3>
+
+                                <p>
+                                    or
+                                    <span class="browse-text">browse files</span>
+                                    on your computer
+                                </p>
+
+                                <div class="upload-requirements">
+
+                                    <span>PNG</span>
+                                    <span>JPEG</span>
+                                    <span>WebP</span>
+
+                                    <span class="requirement-divider"></span>
+
+                                    <span>Maximum 10 MB</span>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Selected image -->
+
+                            <div class="selected-file" id="selected-file">
+
+                                <div class="preview-container">
+
+                                    <img
+                                        id="preview-image"
+                                        class="preview-image"
+                                        alt="Selected astronomical image"
+                                    >
+
+                                </div>
+
+                                <div class="file-information">
+
+                                    <div class="file-information-main">
+
+                                        <p class="section-eyebrow">
+                                            SELECTED IMAGE
+                                        </p>
+
+                                        <p
+                                            class="file-name"
+                                            id="file-name"
+                                        ></p>
+
+                                        <p
+                                            class="file-size"
+                                            id="file-size"
+                                        ></p>
+
+                                    </div>
+
+                                    <button
+                                        type="button"
+                                        class="remove-file"
+                                        id="remove-file"
+                                        aria-label="Remove selected image"
+                                    >
+                                        Remove
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Validation error -->
+
+                            <p
+                                class="upload-error"
+                                id="upload-error"
+                                role="alert"
+                            ></p>
+
+
+                            <!-- Submit -->
+
+                            <div class="upload-footer">
+
+                                <p class="upload-footer-note">
+                                    Your image will be processed by
+                                    Olin's inference pipeline.
+                                </p>
+
+                                <button
+                                    type="button"
+                                    class="analysis-submit"
+                                    id="submit-analysis"
+                                    disabled
+                                >
+                                    <span>Run inference</span>
+                                    <span class="submit-arrow">→</span>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Information panel -->
+
+                    <aside class="analysis-information">
+
+                        <div class="information-block">
+
+                            <p class="section-eyebrow">
+                                THE INFERENCE PROCESS
+                            </p>
+
+                            <h2>From image to parameters.</h2>
+
+                            <p class="information-description">
+                                Olin examines the supplied image and estimates
+                                the physical parameters of its gravitational
+                                lens system.
+                            </p>
+
+                        </div>
+
+
+                        <div class="workflow-list">
+
+                            <div class="workflow-item">
+
+                                <span class="workflow-number">01</span>
+
+                                <div>
+                                    <h3>Image preprocessing</h3>
+
+                                    <p>
+                                        The input is prepared for the
+                                        inference model.
+                                    </p>
+                                </div>
+
+                            </div>
+
+
+                            <div class="workflow-item">
+
+                                <span class="workflow-number">02</span>
+
+                                <div>
+                                    <h3>Parameter inference</h3>
+
+                                    <p>
+                                        Estimate Einstein radius, ellipticity
+                                        and external shear.
+                                    </p>
+                                </div>
+
+                            </div>
+
+
+                            <div class="workflow-item">
+
+                                <span class="workflow-number">03</span>
+
+                                <div>
+                                    <h3>Scientific reconstruction</h3>
+
+                                    <p>
+                                        Generate a reconstructed image and
+                                        residual for examination.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="information-note">
+
+                            <span class="note-symbol">i</span>
+
+                            <p>
+                                The inference pipeline runs after submission.
+                                Keep this page open until processing finishes.
+                            </p>
+
+                        </div>
+
+                    </aside>
+
+                </section>
+
+
+                <!-- Processing state -->
+
+                <section
+                    class="processing-panel"
+                    id="processing-panel"
+                    aria-live="polite"
+                    aria-hidden="true"
+                >
+
+                    <div class="processing-spinner"></div>
+
+                    <p class="section-eyebrow">SCIENTIFIC INFERENCE</p>
+
+                    <h2>Analysing your image.</h2>
+
+                    <p>
+                        Olin is processing the input and estimating
+                        the gravitational lens parameters.
+                    </p>
+
+                    <span class="processing-note">
+                        This may take a little while. Please do not close this page.
+                    </span>
+
+                </section>
+
+
+                <!-- Footer -->
+
+                <footer class="dashboard-footer">
+
+                    <span>OLIN</span>
+
+                    <span>
+                        Gravitational Lensing Inference
+                    </span>
+
+                </footer>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <!-- Mobile sidebar backdrop -->
+
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+
+    <!-- Account drawer backdrop -->
+
+    <div class="drawer-backdrop" id="drawer-backdrop"></div>
+
+
+    <!-- Account drawer -->
+
+    <aside
+        class="account-drawer"
+        id="account-drawer"
+        aria-hidden="true"
+        aria-label="Account panel"
+    >
+
+        <div class="drawer-header">
+
+            <h2>Account</h2>
+
+            <button
+                class="drawer-close"
+                id="drawer-close"
+                type="button"
+                aria-label="Close account panel"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="drawer-profile">
+
+            <div class="drawer-avatar" id="drawer-avatar">?</div>
+
+            <div class="drawer-profile-details">
+
+                <h3 id="drawer-name">Loading...</h3>
+
+                <p id="drawer-email"></p>
+
+            </div>
+
+        </div>
+
+
+        <div class="drawer-divider"></div>
+
+
+        <div class="drawer-actions">
+
+            <a href="./forgot-password.html" class="drawer-action">
+
+                <span class="drawer-action-icon">⌑</span>
+
+                <span class="drawer-action-text">
+                    <strong>Reset password</strong>
+                    <small>Verify your email to reset your password</small>
+                </span>
+
+                <span class="drawer-action-arrow">→</span>
+
+            </a>
+
+
+            <button
+                class="drawer-action logout-action"
+                id="logout-button"
+                type="button"
+            >
+
+                <span class="drawer-action-icon">↗</span>
+
+                <span class="drawer-action-text">
+                    <strong>Logout</strong>
+                    <small>Sign out of your Olin account</small>
+                </span>
+
+                <span class="drawer-action-arrow">→</span>
+
+            </button>
+
+        </div>
+
+
+        <div class="drawer-footer">
+            OLIN · SCIENTIFIC WORKSPACE
+        </div>
+
+    </aside>
+
+
+    <script src="../js/new-analysis.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,383 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Olin — Gravitational Lensing Inference</title>
+
+    <meta
+        name="description"
+        content="Olin is a scientific application for gravitational-lensing inverse inference, parameter estimation, and physics-based reconstruction."
+    >
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;450;500;550;600&family=Newsreader:opsz,wght@6..72,400;6..72,450;6..72,500&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="./css/style.css">
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"
+        }
+    }
+    </script>
+</head>
+
+<body>
+
+    <header class="site-header">
+        <a class="brand" href="./index.html" aria-label="Olin home">
+            olin<span>.</span>
+        </a>
+
+        <div class="header-actions">
+            <a class="login-link" href="./pages/login.html">
+                Sign in
+            </a>
+
+            <a class="register-link" href="./pages/register.html">
+                Explore Olin <span aria-hidden="true">↗</span>
+            </a>
+        </div>
+    </header>
+
+
+    <main>
+
+        <section class="hero">
+
+            <div class="hero-content">
+
+                <p class="eyebrow">
+                    GRAVITATIONAL LENSING · INVERSE INFERENCE
+                </p>
+
+                <h1>
+                    Understanding the mass
+                    <span>behind distorted light.</span>
+                </h1>
+
+                <p class="hero-description">
+                    Gravitational lensing allows the matter between an
+                    astronomical observer and a distant source to be
+                    investigated through its effect on light. Olin
+                    explores this relationship as an inverse problem,
+                    using deep learning to estimate selected physical
+                    parameters from lensed astronomical images and
+                    examining those estimates through a physical
+                    forward model.
+                </p>
+
+                <div class="hero-actions">
+                    <a class="primary-link" href="./pages/register.html">
+                        Begin an analysis
+                        <span aria-hidden="true">↗</span>
+                    </a>
+                </div>
+
+                <p class="hero-note">
+                    A physics-grounded approach to astronomical image analysis.
+                </p>
+
+            </div>
+
+
+            <div class="hero-visual">
+
+                <div class="galaxy-container">
+                    <div id="galaxy-canvas"></div>
+                </div>
+
+                <div class="visualization-caption">
+                    <span>GALACTIC STRUCTURE</span>
+                    <span>INTERACTIVE SIMULATION</span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <article class="page-content">
+
+            <section class="content-section" id="science">
+
+                <p class="eyebrow">
+                    THE SCIENCE
+                </p>
+
+                <h2>
+                    When gravity changes the path of light.
+                </h2>
+
+                <p>
+                    Light does not always travel along the straight path
+                    that an observer might expect. According to general
+                    relativity, the gravitational field of a massive
+                    object curves the surrounding spacetime, changing
+                    the paths followed by light passing through it.
+                    When a distant astronomical source lies behind such
+                    an object, the foreground mass can act as a
+                    gravitational lens.
+                </p>
+
+                <p>
+                    Depending on the geometry of the source, lens, and
+                    observer, the background object may appear
+                    magnified, distorted into arcs, or divided into
+                    multiple images. In favourable configurations,
+                    these images can form nearly complete rings around
+                    the foreground lens. These structures are not
+                    simply visual distortions. Their shapes and
+                    positions contain information about the
+                    gravitational potential responsible for bending
+                    the light.
+                </p>
+
+                <p>
+                    This makes strong gravitational lensing an
+                    important way to investigate matter that cannot
+                    be understood from the light it emits alone.
+                    The observed image, however, does not directly
+                    reveal the physical configuration of the lens.
+                    Several different combinations of physical
+                    parameters can produce similar image structures.
+                    The task of inferring the underlying parameters
+                    from an observed lensed image is therefore an
+                    inverse problem.
+                </p>
+
+            </section>
+
+
+            <section class="content-section" id="method">
+
+                <p class="eyebrow">
+                    THE INVERSE PROBLEM
+                </p>
+
+                <h2>
+                    From an observed image to a physical model.
+                </h2>
+
+                <p>
+                    The forward problem begins with a description of
+                    the lens and the background source. Given their
+                    physical parameters, a gravitational-lensing model
+                    calculates how light is deflected and produces a
+                    corresponding image. In a simulated experiment,
+                    these parameters are known before the observation
+                    is generated.
+                </p>
+
+                <p>
+                    The inverse problem works in the opposite
+                    direction. An astronomical image is available,
+                    but the parameters that produced it are unknown.
+                    A model must use the observable structure of the
+                    image to estimate those parameters. This mapping
+                    is difficult because information about the
+                    physical system is compressed into a two-dimensional
+                    observation, and different configurations may
+                    produce similar appearances.
+                </p>
+
+                <p>
+                    Olin investigates this inverse mapping using a
+                    supervised deep-learning model. Its training
+                    observations are generated from a parameterised
+                    gravitational-lensing forward model. Because the
+                    physical parameters are known during generation,
+                    the resulting images can be paired with their
+                    corresponding parameter values. This provides
+                    controlled examples from which the inverse model
+                    can learn.
+                </p>
+
+                <p>
+                    For an uploaded observation, the image is first
+                    prepared using the preprocessing conventions
+                    established during model development. A trained
+                    ResNet-18 model then estimates five selected
+                    parameters: the Einstein radius (θE), two
+                    components of lens ellipticity (e1 and e2), and
+                    two components of external shear (γ1 and γ2).
+                    The model also provides uncertainty estimates
+                    associated with its predictions.
+                </p>
+
+                <p>
+                    These estimates describe a particular
+                    parameterisation of the lens model. They do not
+                    represent an unrestricted recovery of the
+                    complete mass distribution or the entire
+                    three-dimensional physical state of the
+                    astronomical system. The inference is meaningful
+                    within the assumptions and parameter range of
+                    the model used by Olin.
+                </p>
+
+            </section>
+
+
+            <section class="content-section" id="reconstruction">
+
+                <p class="eyebrow">
+                    PHYSICAL RECONSTRUCTION
+                </p>
+
+                <h2>
+                    Examining an estimate through the forward model.
+                </h2>
+
+                <p>
+                    A numerical prediction alone does not show how
+                    well an inferred physical configuration explains
+                    an observation. To examine the result from a
+                    second perspective, Olin passes the estimated
+                    parameters back into its gravitational-lensing
+                    forward model. The model uses these values to
+                    generate a corresponding lensed image.
+                </p>
+
+                <p>
+                    This generated image is the physics-based
+                    reconstruction. It can be compared directly
+                    with the uploaded observation to examine
+                    similarities and differences in their image
+                    structures. The residual represents the
+                    difference between the observation and the
+                    reconstruction, making discrepancies visible
+                    rather than reducing the analysis to a single
+                    prediction value.
+                </p>
+
+                <p>
+                    The reconstruction is conditional on the
+                    physical model and its assumptions. A close
+                    visual match does not independently establish
+                    that every inferred parameter is uniquely
+                    correct, just as a discrepancy does not
+                    identify its cause by itself. Parameter
+                    degeneracies, observational effects, and
+                    limitations in the forward model can all
+                    influence the comparison.
+                </p>
+
+            </section>
+
+
+            <section class="content-section" id="analysis">
+
+                <p class="eyebrow">
+                    ANALYSIS AND VALIDATION
+                </p>
+
+                <h2>
+                    Inspecting the inference, its uncertainty, and its limits.
+                </h2>
+
+                <p>
+                    An Olin analysis brings together the estimated
+                    physical parameters, their calibrated uncertainty,
+                    the reconstructed observation, and the residual
+                    between the reconstruction and the input image.
+                    Each output provides a different perspective on
+                    the inferred configuration. Together, they allow
+                    a user to examine what the model estimates and
+                    how that estimate behaves when evaluated through
+                    the physical forward model.
+                </p>
+
+                <p>
+                    The results are assembled into a scientific PDF
+                    report containing the uploaded observation and
+                    the relevant analysis outputs. Completed analyses
+                    and their reports can be revisited through the
+                    authenticated application.
+                </p>
+
+                <p>
+                    An important distinction remains between
+                    controlled synthetic evaluation and performance
+                    on real astronomical observations. Synthetic
+                    images provide known parameter values against
+                    which predictions can be measured. Real
+                    observations introduce additional complexities,
+                    and their complete underlying physical
+                    configurations are generally not known.
+                    Performance on synthetic data therefore does
+                    not, by itself, establish accuracy on every
+                    real astronomical dataset.
+                </p>
+
+                <p>
+                    Olin is developed within a defined modelling
+                    regime. Its purpose is to investigate and
+                    deliver a constrained physics-grounded
+                    inverse-inference workflow, with the inferred
+                    parameters examined through the same physical
+                    modelling framework that gives rise to the
+                    simulated observations.
+                </p>
+
+            </section>
+
+
+            <section class="closing-section">
+
+                <p class="eyebrow">
+                    OLIN · SCIENTIFIC IMAGE INFERENCE
+                </p>
+
+                <h2>
+                    Begin with an observation.
+                </h2>
+
+                <p>
+                    Examine the physical parameters behind a
+                    compatible gravitationally lensed image.
+                </p>
+
+                <a class="primary-link" href="./pages/register.html">
+                    Explore Olin
+                    <span aria-hidden="true">↗</span>
+                </a>
+
+            </section>
+
+        </article>
+
+    </main>
+
+
+    <footer class="site-footer">
+
+        <a class="brand footer-brand" href="./index.html">
+            olin<span>.</span>
+        </a>
+
+        <p>
+            Gravitational lensing · Inverse inference
+        </p>
+
+        <span>
+            Scientific software
+        </span>
+
+    </footer>
+
+
+    <script type="module" src="./js/galaxy.js"></script>
+
+</body>
+</html>

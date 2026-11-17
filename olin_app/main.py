@@ -38,6 +38,7 @@ from olin_app.auth import (
     verify_otp_code,
     resend_verification_email,
     login_user,
+    verify_password_reset_otp,
     reset_password,
     request_password_reset,
     create_refresh_session,
@@ -55,6 +56,7 @@ from olin_app.schemas import (
     ForgotPasswordRequest,
     ResetPasswordRequest,
     RefreshRequest,
+    VerifyResetOTPRequest
 )
 
 from olin_app.security import(
@@ -608,6 +610,45 @@ def forgot_password(request: ForgotPasswordRequest):
         )
 
 
+@app.post("/auth/verify-reset-otp")
+def verify_reset_otp(
+    request: VerifyResetOTPRequest,
+    http_request: Request,
+):
+    normalized_email = request.email.strip().lower()
+
+    enforce_rate_limit(
+        scope="verify_reset_otp",
+        identifier=normalized_email,
+        limit=5,
+        window_seconds=600,
+    )
+
+    try:
+        is_valid = verify_password_reset_otp(
+            email=request.email,
+            otp=request.otp,
+        )
+
+        if not is_valid:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid or expired OTP.",
+            )
+
+        return {
+            "message": "OTP verified successfully."
+        }
+
+    except ValueError as error:
+        raise HTTPException(
+            status_code=400,
+            detail=str(error),
+        )
+
+    
+
+
 @app.post("/auth/reset-password")
 def reset_password_endpoint(request : ResetPasswordRequest):
     try:
@@ -739,6 +780,21 @@ def google_login(request: Request):
 
 
 
+def clear_google_oauth_cookies(response: Response, cookie_secure: bool):
+    for cookie_name in (
+        "olin_google_state",
+        "olin_google_nonce",
+        "olin_google_verifier",
+    ):
+        response.delete_cookie(
+            key=cookie_name,
+            path="/auth/google/callback",
+            httponly=True,
+            secure=cookie_secure,
+            samesite="lax",
+        )
+
+
 @app.get("/auth/google/callback")
 def google_callback(request: Request):
 
@@ -750,21 +806,19 @@ def google_callback(request: Request):
         os.getenv("COOKIE_SECURE", "true").lower() == "true"
     )
 
-    def error_response(message: str, status_code: int):
-        response = JSONResponse(
-            status_code=status_code,
-            content={"detail": message},
+    def error_response(message: str):
+        print(f"[GOOGLE OAUTH ERROR] {message}")
+        # Return the user to the sign-in page without exposing backend details.
+        response = RedirectResponse(
+            url=f"{frontend_origin}/pages/login.html?google_error=1",
+            status_code=303,
         )
         clear_google_oauth_cookies(response, cookie_secure)
         return response
 
     if not client_id or not client_secret or not redirect_uri:
-        return error_response(
-            "Google OAuth is not configured.",
-            500,
-        )
+        return error_response("Google OAuth is not configured.")
 
-    # Retrieve temporary values from the login-start request.
     stored_state = request.cookies.get("olin_google_state")
     nonce = request.cookies.get("olin_google_nonce")
     code_verifier = request.cookies.get("olin_google_verifier")
@@ -772,31 +826,19 @@ def google_callback(request: Request):
     returned_state = request.query_params.get("state")
     authorization_code = request.query_params.get("code")
 
-    # Handle user cancellation or Google authorization errors.
     if request.query_params.get("error"):
-        return error_response(
-            "Google sign-in was cancelled or denied.",
-            400,
-        )
+        return error_response("Google sign-in was cancelled or denied.")
 
-    # Validate OAuth state.
     if (
         not stored_state
         or not returned_state
         or not secrets.compare_digest(stored_state, returned_state)
     ):
-        return error_response(
-             "OAuth state validation failed.",
-            400,
-        )
+        return error_response("OAuth state validation failed.")
 
     if not nonce or not code_verifier or not authorization_code:
-        return error_response(
-            "Google login information is incomplete.",
-            400,
-        )
+        return error_response("Google login information is incomplete.")
 
-    # Exchange authorization code for Google tokens.
     try:
         token_response = requests.post(
             "https://oauth2.googleapis.com/token",
@@ -815,54 +857,35 @@ def google_callback(request: Request):
         token_data = token_response.json()
 
     except (requests.RequestException, ValueError):
-        return error_response(
-            "Unable to complete Google authentication.",
-            502,
-        )
+        return error_response("Unable to complete Google authentication.")
 
     google_id_token = token_data.get("id_token")
 
     if not google_id_token:
-        return error_response(
-            "Google did not return an identity token.",
-            401,
-        )
+        return error_response("Google did not return an identity token.")
 
-    # Verify Google's identity token and nonce.
     try:
         google_identity = verify_google_id_token(
             google_id_token,
             nonce,
         )
 
-    except ValueError:
-        return error_response(
-            "Google identity verification failed.",
-            401,
-        )
+    except ValueError as error:
+        return error_response("Google identity verification failed.")
 
-    # Find or create the corresponding Olin account.
     try:
         user = login_or_create_google_user(google_identity)
 
-    except ValueError as error:
-        return error_response(str(error), 409)
+    except ValueError:
+        return error_response("Unable to create or retrieve the Olin account.")
 
-    # Issue Olin's existing authentication tokens.
-    access_token = create_access_token(user["id"])
+    # Create Olin's refresh session.
     refresh_token = create_refresh_session(user["id"])
 
-    response = JSONResponse(
-        content={
-            "message": "Google login successful.",
-            "access_token": access_token,
-            "token_type": "bearer",
-            "expires_in": 1800,
-            "user": {
-                "name": user["name"],
-                "email": user["email"],
-            },
-        }
+    # Redirect to the application dashboard.
+    response = RedirectResponse(
+        url=f"{frontend_origin}/pages/dashboard.html",
+        status_code=303,
     )
 
     # Keep the refresh token inaccessible to JavaScript.
@@ -879,6 +902,7 @@ def google_callback(request: Request):
     clear_google_oauth_cookies(response, cookie_secure)
 
     return response
+
 
 
 
