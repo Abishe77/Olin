@@ -1,11 +1,16 @@
 
 import json
+import os
+
 import numpy as np
 import tensorflow as tf
 
+from huggingface_hub import hf_hub_download
 from tensorflow.keras import layers, Model
 
 from inference.config import (
+    HF_MODEL_REPO,
+    HF_MODEL_REVISION,
     MODEL_PATH,
     TARGET_NORMALIZATION_PATH,
     UNCERTAINTY_CALIBRATION_PATH
@@ -19,6 +24,39 @@ TARGET_COLUMNS = [
     "gamma1",
     "gamma2"
 ]
+
+
+def download_model_if_needed():
+
+    if MODEL_PATH.is_file():
+        print("Local model checkpoint found.")
+        return
+
+    token = os.getenv("HF_TOKEN")
+
+    if not token:
+        raise RuntimeError(
+            "Model checkpoint is missing and HF_TOKEN is not configured."
+        )
+
+    print("Downloading private Olin model from Hugging Face...")
+
+    MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+    downloaded_path = hf_hub_download(
+        repo_id=HF_MODEL_REPO,
+        filename=MODEL_PATH.name,
+        revision=HF_MODEL_REVISION,
+        token=token,
+        local_dir=str(MODEL_PATH.parent)
+    )
+
+    if not MODEL_PATH.is_file():
+        raise FileNotFoundError(
+            f"Model download did not create the expected file: {MODEL_PATH}"
+        )
+
+    print(f"Model downloaded successfully: {downloaded_path}")
 
 
 # Monte Carlo Dropout layer
@@ -118,6 +156,9 @@ def build_mc_resnet18():
 
 # Load all inference assets
 def load_inference_assets():
+
+    # Retrieve the private checkpoint if it is not already available.
+    download_model_if_needed()
 
     required_files = [
         MODEL_PATH,
