@@ -12,9 +12,9 @@ Olin connects gravitational-lensing physics with a machine-learning inference pi
 
 ## Project Status
 
-**Olin V1 — Core Scientific Pipeline and Integrated Web Application Implemented**
+**Olin V1 — Core Scientific Pipeline, Integrated Web Application and Local Docker Deployment Implemented**
 
-The first complete application version brings together the scientific inference pipeline, authenticated user workflows, analysis visualisation, and PDF reporting.
+The first complete application version brings together the scientific inference pipeline, authenticated user workflows, analysis visualisation, PDF reporting, and containerised local deployment.
 
 ### Completed
 
@@ -42,15 +42,16 @@ The first complete application version brings together the scientific inference 
 - Reconstruction and residual visualisation.
 - Scientific PDF report generation and retrieval.
 - Integrated frontend and backend workflow.
+- Docker containerisation of the API and PostgreSQL database.
+- Persistent Docker storage for database records, model cache and private application files.
+- Local end-to-end verification of the Dockerised inference and reporting workflow.
 
-### Current Development
+### Current Research Directions
 
-The core V1 application is implemented. Further work is focused on:
-
-- Deployment preparation.
-- Additional integration and security testing.
 - Evaluation on a broader range of real astronomical observations.
 - Further scientific validation and model generalisation experiments.
+- Additional parameter-degeneracy and out-of-distribution studies.
+- Improved uncertainty evaluation under observational distribution shift.
 
 ## Scientific Objective
 
@@ -95,19 +96,19 @@ The observation pipeline follows:
 
 ```text
 Lens parameters
-      +
+     +
 Source parameters
-      ↓
+     ↓
 Gravitational lensing
-      ↓
+     ↓
 Ideal lensed image
-      ↓
+     ↓
 PSF convolution
-      ↓
+     ↓
 Photon-counting noise
-      ↓
+     ↓
 Detector read noise
-      ↓
+     ↓
 Synthetic observation
 ```
 
@@ -211,7 +212,9 @@ Rather than training five independent models, V2 explored a shared multi-output 
 
 V3 uses a ResNet-18 architecture for multi-parameter inference.
 
-The model predicts the five selected physical parameters from a normalised grayscale observation.
+The model predicts five selected physical parameters from a normalised grayscale observation.
+
+The architecture uses a shared convolutional feature extractor followed by a global average pooling layer and a shared dense representation. Three output heads produce the Einstein radius, ellipticity components and shear components.
 
 **Training configuration:**
 
@@ -244,39 +247,156 @@ Olin uses Monte Carlo dropout to obtain multiple predictions for an input observ
 
 The model is evaluated repeatedly with dropout active, producing a distribution of predictions rather than a single output.
 
-The resulting variation is used to estimate predictive uncertainty.
+For each physical parameter, the mean prediction is calculated as:
 
-The uncertainty estimates are calibrated using the synthetic validation data. Calibration is intended to improve the relationship between predicted uncertainty and observed prediction errors within the evaluated data distribution.
+$$
+\mu =
+\frac{1}{T}
+\sum_{t=1}^{T} \hat{y}_t
+$$
 
-This calibration does not guarantee equivalent uncertainty coverage under distribution shift or on real astronomical observations.
+The sample standard deviation is:
+
+$$
+\sigma =
+\sqrt{
+\frac{1}{T-1}
+\sum_{t=1}^{T}
+(\hat{y}_t-\mu)^2
+}
+$$
+
+where $T$ is the number of stochastic forward passes, configured as 30.
+
+The implementation uses a custom dropout layer that applies TensorFlow dropout directly during each forward pass. This allows stochastic predictions even when the model is called with `training=False`.
+
+Predictions and their standard deviations are first calculated in normalised target space. They are then converted into physical parameter units using the target means and standard deviations.
+
+Parameter-specific calibration factors are subsequently applied:
+
+$$
+\sigma_{\mathrm{calibrated},j}
+=
+c_j \sigma_j
+$$
+
+where $c_j$ is the calibration factor for parameter $j$.
+
+The calibration factors are obtained using synthetic validation data.
+
+Calibration is intended to improve the relationship between predicted uncertainty and observed prediction errors within the evaluated data distribution. It does not guarantee equivalent uncertainty coverage under distribution shift or on real astronomical observations.
 
 ## Physics-Based Reconstruction — FM2
 
-The machine-learning model estimates physical parameters. FM2 then uses those estimates in a gravitational-lensing forward model to generate a corresponding reconstruction.
+The machine-learning model estimates physical lens parameters. FM2 then uses those estimates in a gravitational-lensing forward model to generate a corresponding reconstruction.
 
 ```text
 Observed astronomical image
-          ↓
+         ↓
 Image preprocessing
-          ↓
-     V3 ResNet-18
-          ↓
- Five physical parameters
-          ↓
- Uncertainty estimation
-          ↓
-          FM2
-          ↓
- Physics-based reconstruction
-          ↓
- Comparison with observation
-          ↓
-        Residual
+         ↓
+    V3 ResNet-18
+         ↓
+Five physical lens parameters
+         ↓
+Uncertainty estimation
+         ↓
+         FM2
+         ↓
+Fix predicted lens parameters
+         ↓
+Optimise source parameters
+         ↓
+Physics-based reconstruction
+         ↓
+Comparison with observation
+         ↓
+       Residual
 ```
 
-The reconstruction is not an image-enhancement or denoising operation. It is generated using the inferred physical parameters and the forward-model assumptions.
+### Reconstruction methodology
 
-The residual provides a visual representation of the difference between the observation and the reconstructed image.
+FM2 receives the five lens parameters predicted by V3:
+
+- Einstein radius ($\theta_E$).
+- Lens ellipticity ($e_1$, $e_2$).
+- External shear ($\gamma_1$, $\gamma_2$).
+
+These lens parameters are held fixed during reconstruction.
+
+Instead, FM2 optimises five source parameters:
+
+- Source centre coordinates ($x_s$, $y_s$).
+- Sérsic effective radius ($R_{\mathrm{Sérsic}}$).
+- Sérsic index ($n_{\mathrm{Sérsic}}$).
+- Source amplitude ($A$).
+
+The source ellipticity components are fixed at zero in the current reconstruction implementation.
+
+The optimisation uses SciPy's `least_squares` method to minimise the sum of squared pixel-wise differences between the forward-model image and the observed image:
+
+$$
+\min_{\mathbf{p}}
+\sum_{i=1}^{N}
+\left[
+I_{\mathrm{model},i}(\mathbf{p})
+-
+I_{\mathrm{observed},i}
+\right]^2
+$$
+
+where:
+
+- $\mathbf{p}$ represents the five optimised source parameters.
+- $I_{\mathrm{model}}$ represents the rendered forward-model image.
+- $I_{\mathrm{observed}}$ represents the original-scale input observation.
+- $N$ represents the number of image pixels.
+
+The optimisation is subject to parameter bounds defined in the implementation.
+
+The reconstruction is generated using the inferred lens parameters and fitted source parameters through the FM1 forward-model components.
+
+### Residual analysis
+
+The residual image is calculated as:
+
+$$
+I_{\mathrm{residual}}
+=
+I_{\mathrm{observed}}
+-
+I_{\mathrm{reconstructed}}
+$$
+
+Two numerical metrics are calculated:
+
+**Root Mean Squared Error:**
+
+$$
+\mathrm{RMSE}
+=
+\sqrt{
+\frac{1}{N}
+\sum_{i=1}^{N}
+(I_{\mathrm{observed},i}
+-
+I_{\mathrm{reconstructed},i})^2
+}
+$$
+
+**Mean Absolute Error:**
+
+$$
+\mathrm{MAE}
+=
+\frac{1}{N}
+\sum_{i=1}^{N}
+|I_{\mathrm{observed},i}
+-
+I_{\mathrm{reconstructed},i}|
+$$
+
+The reconstruction is not an image-enhancement or denoising operation. It is generated using inferred physical parameters and the forward-model assumptions.
 
 ![Original observation, physics-based reconstruction, and residual](docs/images/reconstruction-comparison.png)
 
@@ -302,23 +422,23 @@ Olin V1 includes an integrated web application that exposes the scientific infer
 
 ```text
 User authentication
-        ↓
+       ↓
 Dashboard
-        ↓
+       ↓
 Upload astronomical image
-        ↓
+       ↓
 Image preprocessing
-        ↓
+       ↓
 V3 inference
-        ↓
+       ↓
 Parameter predictions
-        ↓
+       ↓
 Uncertainty estimation
-        ↓
+       ↓
 FM2 reconstruction
-        ↓
+       ↓
 Residual generation
-        ↓
+       ↓
 Scientific PDF report
 ```
 
@@ -343,7 +463,7 @@ The application includes:
 - Individual analysis results.
 - Prediction and uncertainty visualisation.
 - Reconstruction and residual viewing.
-- Report access.
+- Report access and PDF downloads.
 
 ### Backend
 
@@ -375,11 +495,13 @@ The application exposes the following principal analysis and reporting endpoints
 
 Access to user-specific resources is protected by authentication and ownership checks.
 
+Analysis results can be viewed in the application. Generated PDF reports are retrieved through authenticated download functionality.
+
 ## Technologies
 
 | Area | Technologies |
 |---|---|
-| Scientific computing | Python, NumPy |
+| Scientific computing | Python, NumPy, SciPy |
 | Gravitational lens modelling | `lenstronomy` |
 | Machine learning | TensorFlow, Keras |
 | Computer vision | ResNet-18 |
@@ -388,6 +510,8 @@ Access to user-specific resources is protected by authentication and ownership c
 | Database | PostgreSQL |
 | Frontend | HTML, CSS, JavaScript |
 | 3D galaxy visualisation | Three.js |
+| Model distribution | Hugging Face Hub |
+| Containerisation | Docker, Docker Compose |
 | Scientific reporting | PDF generation |
 | Version control | Git, GitHub |
 
@@ -412,7 +536,9 @@ Olin/
 │
 ├── olin_app/
 │   ├── main.py
-│   └── database.py
+│   ├── database.py
+│   └── database/
+│       └── schema.sql
 │
 ├── inference/
 │   ├── config.py
@@ -431,11 +557,202 @@ Olin/
 │   ├── Olin_scientific_sw_report.pdf
 │   └── Experiment Reports/
 │
-├── README.md
-└── .gitignore
+├── Dockerfile
+├── compose.yaml
+├── .dockerignore
+├── .gitignore
+└── README.md
 ```
 
-Some generated datasets, trained model weights, and intermediate artifacts are intentionally excluded from version control.
+Some generated datasets, trained model artifacts, and intermediate files are intentionally excluded from version control.
+
+The trained V3 checkpoint is distributed separately through a private Hugging Face model repository.
+
+## Docker Deployment
+
+Olin includes a Docker-based local deployment for the FastAPI backend and PostgreSQL database.
+
+The frontend remains a separate static application and can be served locally using a development server such as VS Code Live Server.
+
+### Deployment architecture
+
+```text
+Browser
+   │
+   ├── Frontend
+   │     HTML / CSS / JavaScript
+   │     Live Server
+   │
+   └── FastAPI API
+          │
+          ├── Inference pipeline
+          │      ├── Image preprocessing
+          │      ├── V3 ResNet-18
+          │      ├── MC Dropout
+          │      └── FM2 reconstruction
+          │
+          ├── PDF report generation
+          │
+          └── PostgreSQL database
+```
+
+Docker Compose manages two services:
+
+| Service | Responsibility |
+|---|---|
+| `api` | FastAPI application and scientific inference pipeline |
+| `db` | PostgreSQL database |
+
+The API waits for the database health check to pass before starting.
+
+The API is bound to `127.0.0.1:8000` on the host machine.
+
+### Prerequisites
+
+- Windows 11 or another supported Docker environment.
+- Docker Desktop with Docker Compose.
+- Git.
+- VS Code or another static frontend development server.
+- A configured application environment file.
+- Access to the private Olin model repository on Hugging Face if the model checkpoint is not already available locally.
+
+### Model provisioning
+
+The trained V3 checkpoint is not included in the Git repository or Docker build context.
+
+The inference configuration identifies the private Hugging Face repository and a specific model revision.
+
+At application startup:
+
+1. The model loader checks whether the checkpoint already exists locally.
+2. If the checkpoint is missing, it reads `HF_TOKEN` from the environment.
+3. It downloads the checkpoint from the configured Hugging Face repository and pinned revision.
+4. The checkpoint is stored under `training/models`.
+5. The inference architecture is reconstructed with Monte Carlo dropout, and the trained weights are transferred into it.
+
+The target-normalization metadata and uncertainty-calibration factors are provisioned separately with the application.
+
+A valid Hugging Face access token is required when the private checkpoint must be downloaded. It is not required for subsequent starts when the checkpoint remains available in the persistent model-cache volume.
+
+### Environment configuration
+
+Create a `.env` file in the repository root.
+
+The Docker Compose configuration requires the following database variables:
+
+```dotenv
+DB_NAME=olin
+DB_USER=database_user
+DB_PASSWORD=database_password
+```
+
+The model loader additionally uses:
+
+```dotenv
+HF_TOKEN=hugging_face_access_token
+```
+
+The application may require other environment variables for its authentication, email and external service integrations. Configure these according to the application's existing environment requirements.
+
+**Never commit `.env` or expose access tokens, database passwords, OAuth credentials or other secrets in source control.**
+
+### Build and start
+
+From the repository root, run:
+
+```bash
+docker compose build api
+```
+
+Start the services:
+
+```bash
+docker compose up -d
+```
+
+Alternatively, build and start in one command:
+
+```bash
+docker compose up -d --build
+```
+
+Check the running services:
+
+```bash
+docker compose ps
+```
+
+View API logs:
+
+```bash
+docker compose logs -f api
+```
+
+View database logs:
+
+```bash
+docker compose logs -f db
+```
+
+The API documentation is available at:
+
+`http://localhost:8000/docs`
+
+### Starting the frontend
+
+The frontend is served separately from the Docker containers.
+
+Open the frontend project in VS Code and start Live Server using the configured frontend entry page.
+
+The browser accesses the frontend through the Live Server address, while API requests are directed to the locally running FastAPI service.
+
+Ensure the frontend's configured API address points to the running backend.
+
+### Persistent storage
+
+Docker Compose uses three named volumes:
+
+| Volume | Purpose |
+|---|---|
+| `postgres_data` | PostgreSQL database records |
+| `olin_private_storage` | Private application files, uploads and generated reports |
+| `olin_model_cache` | Downloaded V3 model checkpoint |
+
+These volumes allow their respective data to survive ordinary container restarts and container recreation.
+
+### Restart and shutdown
+
+Restart the services:
+
+```bash
+docker compose restart
+```
+
+Stop and remove the containers while preserving persistent volumes:
+
+```bash
+docker compose down
+```
+
+Start the existing deployment again:
+
+```bash
+docker compose up -d
+```
+
+**Important:** Avoid the following command unless you deliberately intend to delete all Compose-managed persistent data:
+
+```bash
+docker compose down -v
+```
+
+The `-v` option removes the named volumes, including the PostgreSQL database, private application storage and cached model checkpoint.
+
+### Deployment scope
+
+The current Docker configuration provides a reproducible local containerised environment for the backend and database.
+
+It does not represent a publicly hosted production deployment. The frontend is served separately, and deployment to an external server would require additional infrastructure and operational configuration.
 
 ## Scientific Design Principles
 
@@ -458,10 +775,13 @@ Olin V1 is a constrained research and scientific software project. Its results s
 - The predicted parameters describe the selected lens parameterisation, not an unrestricted recovery of the complete mass distribution.
 - Synthetic test metrics do not establish real-observation accuracy.
 - Uncertainty calibration on synthetic validation data may not remain reliable under distribution shift.
+- Monte Carlo dropout estimates predictive variation under the implemented model; it does not capture every source of scientific or observational uncertainty.
 - Parameter degeneracies can produce similar reconstructed observations.
+- FM2 holds the predicted lens parameters fixed while fitting a restricted source model. Reconstruction quality is therefore conditional on those lens estimates and source-model assumptions.
 - The observation model does not reproduce every effect present in real telescope data.
 - The exploratory HE0435-1223 test does not constitute scientific validation on real observations.
-- Datasets and trained model artifacts are not included in the Git repository. They must be provisioned separately to execute the corresponding inference and training workflows.
+- Datasets and training artifacts are not included in the Git repository. They must be provisioned separately to reproduce the corresponding training experiments.
+- The trained inference checkpoint is distributed separately through a private Hugging Face repository.
 
 ## Future Directions
 
@@ -475,7 +795,7 @@ Potential directions include:
 - Out-of-distribution testing.
 - Improved uncertainty evaluation under distribution shift.
 - Additional physical variation in synthetic datasets.
-- Deployment and operational hardening of the web application.
+- Further scientific validation of the inference and reconstruction pipeline.
 
 ## Documentation
 
@@ -497,6 +817,9 @@ The project includes additional scientific and development documentation:
 
 - [lenstronomy](https://github.com/lenstronomy/lenstronomy) — open-source Python software for gravitational-lens modelling.
 - [Three.js](https://threejs.org/) — JavaScript 3D graphics library.
+- [Hugging Face Hub](https://huggingface.co/docs/huggingface_hub) — model repository and checkpoint distribution.
+- [Docker](https://docs.docker.com/) — application containerisation.
+- [PostgreSQL](https://www.postgresql.org/docs/) — relational database system.
 
 ---
 
