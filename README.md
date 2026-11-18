@@ -65,13 +65,13 @@ The forward problem starts with known physical parameters and generates an obser
 
 The gravitational lens equation is:
 
-$$
+$
 \boldsymbol{\beta}
 =
 \boldsymbol{\theta}
 -
 \boldsymbol{\alpha}(\boldsymbol{\theta})
-$$
+$
 
 where:
 
