@@ -1,0 +1,36 @@
+
+# Exclude everything by default
+**
+
+# Python dependencies
+!requirements.txt
+
+# Backend application
+!olin_app/
+!olin_app/**
+
+# Inference source files
+!inference/
+!inference/*.py
+# Required FM1 forward-model module
+!FM1/
+!FM1/dataset_generation_forward_model.py
+
+# Dataset preprocessing metadata only
+!datasets/
+!datasets/dataset_v1/
+!datasets/dataset_v1/preprocessing_metadata.json
+
+# Target normalization and uncertainty calibration only
+!training/
+!training/results/
+!training/results/v3_resnet18/
+!training/results/v3_resnet18/target_normalization.json
+!training/results/v3_resnet18/uncertainty/
+!training/results/v3_resnet18/uncertainty/calibration_factors.json
+
+# Exclude Python caches and tests
+**/__pycache__/
+**/*.py[cod]
+**/tests/
+**/test_*.py
