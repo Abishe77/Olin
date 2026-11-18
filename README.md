@@ -1,5 +1,7 @@
 # Olin
 
+> It started with a simple gravitational lens equation and ended with `docker compose up -d`.
+
 **Olin** is a scientific machine-learning application exploring **inverse inference in strong gravitational lensing**.
 
 The project investigates whether a computer-vision model can infer selected physical lens parameters from astronomical observations and examine those estimates through an established gravitational-lensing forward model.
