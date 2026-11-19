@@ -56,6 +56,7 @@ def verify_google_id_token(token : str , nonce: str) -> dict:
             token,
             google_requests.Request(),
             audience = client_id,
+            clock_skew_in_seconds=5,
         )
     except ValueError as error:
         raise ValueError("Invalid Google ID token.") from None

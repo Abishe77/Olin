@@ -46,6 +46,20 @@ services:
 
     restart: unless-stopped
 
+  frontend:
+    image: nginx:alpine
+
+    ports:
+      - "127.0.0.1:5500:80"
+
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+
+    depends_on:
+      - api
+
+    restart: unless-stopped
+
 volumes:
   postgres_data:
   olin_private_storage:

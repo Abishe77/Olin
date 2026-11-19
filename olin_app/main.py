@@ -112,6 +112,11 @@ frontend_origin = os.getenv(
     "http://localhost:5500",
 )
 
+frontend_base_url = os.getenv(
+    "FRONTEND_BASE_URL",
+    "http://localhost:5500/frontend",
+)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[frontend_origin],
@@ -810,7 +815,7 @@ def google_callback(request: Request):
         print(f"[GOOGLE OAUTH ERROR] {message}")
         # Return the user to the sign-in page without exposing backend details.
         response = RedirectResponse(
-            url=f"{frontend_origin}/pages/login.html?google_error=1",
+            url=f"{frontend_base_url}/pages/login.html?google_error=1",
             status_code=303,
         )
         clear_google_oauth_cookies(response, cookie_secure)
@@ -884,7 +889,7 @@ def google_callback(request: Request):
 
     # Redirect to the application dashboard.
     response = RedirectResponse(
-        url=f"{frontend_origin}/pages/dashboard.html",
+        url=f"{frontend_base_url}/pages/dashboard.html",
         status_code=303,
     )
 
