@@ -8,6 +8,8 @@ The project investigates whether a computer-vision model can infer selected phys
 
 ![Olin Galaxy Animation](docs/images/olin-galaxy.gif)
 
+<sub>Custom-built 3D galaxy visualization, procedurally generated using mathematical equations and rendered with Three.js.</sub>
+
 > **Physical parameters → Gravitational lensing → Synthetic observation → Deep-learning inference → Physics-based reconstruction**
 
 Olin connects gravitational-lensing physics with a machine-learning inference pipeline and an integrated web application for analysing compatible astronomical images.
@@ -44,7 +46,7 @@ The first complete application version brings together the scientific inference 
 - Reconstruction and residual visualisation.
 - Scientific PDF report generation and retrieval.
 - Integrated frontend and backend workflow.
-- Docker containerisation of the API and PostgreSQL database.
+- Docker containerisation of the Nginx frontend, FastAPI backend and PostgreSQL database.
 - Persistent Docker storage for database records, model cache and private application files.
 - Local end-to-end verification of the Dockerised inference and reporting workflow.
 
@@ -67,13 +69,7 @@ The forward problem starts with known physical parameters and generates an obser
 
 The gravitational lens equation is:
 
-$
-\boldsymbol{\beta}
-=
-\boldsymbol{\theta}
--
-\boldsymbol{\alpha}(\boldsymbol{\theta})
-$
+$\boldsymbol{\beta}=\boldsymbol{\theta}-\boldsymbol{\alpha}(\boldsymbol{\theta})$
 
 where:
 
@@ -251,22 +247,11 @@ The model is evaluated repeatedly with dropout active, producing a distribution 
 
 For each physical parameter, the mean prediction is calculated as:
 
-$$
-\mu =
-\frac{1}{T}
-\sum_{t=1}^{T} \hat{y}_t
-$$
+$\mu =\frac{1}{T}\sum_{t=1}^{T} \hat{y}_t$
 
 The sample standard deviation is:
 
-$$
-\sigma =
-\sqrt{
-\frac{1}{T-1}
-\sum_{t=1}^{T}
-(\hat{y}_t-\mu)^2
-}
-$$
+$\sigma =\sqrt{\frac{1}{T-1}\sum_{t=1}^{T}(\hat{y}_t-\mu)^2}$
 
 where $T$ is the number of stochastic forward passes, configured as 30.
 
@@ -276,11 +261,7 @@ Predictions and their standard deviations are first calculated in normalised tar
 
 Parameter-specific calibration factors are subsequently applied:
 
-$$
-\sigma_{\mathrm{calibrated},j}
-=
-c_j \sigma_j
-$$
+$\sigma_{\mathrm{calibrated},j}=c_j \sigma_j$
 
 where $c_j$ is the calibration factor for parameter $j$.
 
@@ -303,7 +284,7 @@ Five physical lens parameters
          ↓
 Uncertainty estimation
          ↓
-         FM2
+        FM2
          ↓
 Fix predicted lens parameters
          ↓
@@ -337,15 +318,7 @@ The source ellipticity components are fixed at zero in the current reconstructio
 
 The optimisation uses SciPy's `least_squares` method to minimise the sum of squared pixel-wise differences between the forward-model image and the observed image:
 
-$$
-\min_{\mathbf{p}}
-\sum_{i=1}^{N}
-\left[
-I_{\mathrm{model},i}(\mathbf{p})
--
-I_{\mathrm{observed},i}
-\right]^2
-$$
+$\min_{\mathbf{p}}\sum_{i=1}^{N}\left[I_{\mathrm{model},i}(\mathbf{p})-I_{\mathrm{observed},i}\right]^2$
 
 where:
 
@@ -362,41 +335,17 @@ The reconstruction is generated using the inferred lens parameters and fitted so
 
 The residual image is calculated as:
 
-$$
-I_{\mathrm{residual}}
-=
-I_{\mathrm{observed}}
--
-I_{\mathrm{reconstructed}}
-$$
+$I_{\mathrm{residual}}=I_{\mathrm{observed}}-I_{\mathrm{reconstructed}}$
 
 Two numerical metrics are calculated:
 
 **Root Mean Squared Error:**
 
-$$
-\mathrm{RMSE}
-=
-\sqrt{
-\frac{1}{N}
-\sum_{i=1}^{N}
-(I_{\mathrm{observed},i}
--
-I_{\mathrm{reconstructed},i})^2
-}
-$$
+$\mathrm{RMSE}=\sqrt{\frac{1}{N}\sum_{i=1}^{N}(I_{\mathrm{observed},i}-I_{\mathrm{reconstructed},i})^2}$
 
 **Mean Absolute Error:**
 
-$$
-\mathrm{MAE}
-=
-\frac{1}{N}
-\sum_{i=1}^{N}
-|I_{\mathrm{observed},i}
--
-I_{\mathrm{reconstructed},i}|
-$$
+$\mathrm{MAE}=\frac{1}{N}\sum_{i=1}^{N}|I_{\mathrm{observed},i}-I_{\mathrm{reconstructed},i}|$
 
 The reconstruction is not an image-enhancement or denoising operation. It is generated using inferred physical parameters and the forward-model assumptions.
 
@@ -572,18 +521,15 @@ The trained V3 checkpoint is distributed separately through a private Hugging Fa
 
 ## Docker Deployment
 
-Olin includes a Docker-based local deployment for the FastAPI backend and PostgreSQL database.
-
-The frontend remains a separate static application and can be served locally using a development server such as VS Code Live Server.
+Olin uses Docker Compose to run the frontend, backend and database as separate containers, providing a reproducible local deployment environment.
 
 ### Deployment architecture
 
 ```text
 Browser
    │
-   ├── Frontend
-   │     HTML / CSS / JavaScript
-   │     Live Server
+   ├── Nginx
+   │     └── HTML / CSS / JavaScript
    │
    └── FastAPI API
           │
@@ -598,23 +544,23 @@ Browser
           └── PostgreSQL database
 ```
 
-Docker Compose manages two services:
+Docker Compose manages three services:
 
 | Service | Responsibility |
 |---|---|
+| `frontend` | Nginx static file server for the frontend |
 | `api` | FastAPI application and scientific inference pipeline |
 | `db` | PostgreSQL database |
 
 The API waits for the database health check to pass before starting.
 
-The API is bound to `127.0.0.1:8000` on the host machine.
+The frontend is accessible at `http://localhost:5500/`, while the API is bound to `127.0.0.1:8000` on the host machine.
 
 ### Prerequisites
 
 - Windows 11 or another supported Docker environment.
 - Docker Desktop with Docker Compose.
 - Git.
-- VS Code or another static frontend development server.
 - A configured application environment file.
 - Access to the private Olin model repository on Hugging Face if the model checkpoint is not already available locally.
 
@@ -696,19 +642,13 @@ View database logs:
 docker compose logs -f db
 ```
 
+The frontend is available at:
+
+`http://localhost:5500/`
+
 The API documentation is available at:
 
 `http://localhost:8000/docs`
-
-### Starting the frontend
-
-The frontend is served separately from the Docker containers.
-
-Open the frontend project in VS Code and start Live Server using the configured frontend entry page.
-
-The browser accesses the frontend through the Live Server address, while API requests are directed to the locally running FastAPI service.
-
-Ensure the frontend's configured API address points to the running backend.
 
 ### Persistent storage
 
@@ -752,9 +692,9 @@ The `-v` option removes the named volumes, including the PostgreSQL database, pr
 
 ### Deployment scope
 
-The current Docker configuration provides a reproducible local containerised environment for the backend and database.
+The current Docker configuration provides a reproducible local containerised environment for the frontend, backend and database.
 
-It does not represent a publicly hosted production deployment. The frontend is served separately, and deployment to an external server would require additional infrastructure and operational configuration.
+It does not represent a publicly hosted production deployment. Deployment to an external server would require additional infrastructure and operational configuration.
 
 ## Scientific Design Principles
 
